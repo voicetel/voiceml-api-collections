@@ -1,0 +1,40 @@
+meta {
+  name: Calls · Update SIPREC session
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec/:Sid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+  Sid}.jso: <Sid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Status": "stopped"
+}
+}
+
+docs {
+**Update a SIPREC session — clears tracking only**
+StefanYohansson/mod_siprec doesn't expose a stop verb; the SRS
+recording session continues until the call hangs up. This
+endpoint clears callBroadcast's session-tracking entry only.
+Documented mod_siprec limitation.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `siprec.update`
+}

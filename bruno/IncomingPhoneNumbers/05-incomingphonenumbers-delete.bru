@@ -1,0 +1,30 @@
+meta {
+  name: Incoming Phone Numbers · Delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/:Sid}.jso
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+docs {
+**Release a DID from the authenticated tenant**
+Tenant-scoped — a number assigned to a different account 404s
+without affecting the row. Idempotent: 204 on success OR if
+the number was already gone.
+
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.delete`
+}

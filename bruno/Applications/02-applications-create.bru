@@ -1,0 +1,36 @@
+meta {
+  name: Applications · Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create an Application**
+Persistent named TwiML+callback bundle — referenced by
+`<Dial><Application>AP…</Application></Dial>`. The agent's
+Dial verb resolves the SID, fetches voice_url, and runs the
+returned TwiML on the call leg.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `applications.create`
+}

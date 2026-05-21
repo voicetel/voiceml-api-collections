@@ -1,0 +1,32 @@
+meta {
+  name: Applications · Update
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications/:Sid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update an Application (partial — only set fields are touched)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `applications.update`
+}

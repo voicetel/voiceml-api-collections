@@ -1,0 +1,46 @@
+meta {
+  name: Calls · List
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~To: 
+  ~From: 
+  ~Status: 
+  ~ParentCallSid: 
+  ~StartTime: 
+  ~StartTime<: 
+  ~StartTime>: 
+  ~EndTime: 
+  ~EndTime<: 
+  ~EndTime>: 
+}
+
+docs {
+**List calls**
+Paginated list of call records for the given account. Filters
+match Twilio: `To`, `From`, `Status`, `ParentCallSid`,
+`StartTime` (bare = full UTC day), `StartTime<` (strict upper),
+`StartTime>` (strict lower), and the same triple for `EndTime`.
+For backwards compatibility the legacy `StartTime>=` / `EndTime<=`
+SQL-style operators are also accepted at the handler. Pagination
+via `Page` and `PageSize` (max 1000). `EndTime` filters
+restrict the result set to terminal-status rows (an in-progress
+call has no end time and cannot match an EndTime window).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `calls.list`
+}

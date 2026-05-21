@@ -1,0 +1,27 @@
+meta {
+  name: Applications · List
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~FriendlyName: 
+}
+
+docs {
+**List Applications for the account (paged, FriendlyName ASC)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `applications.list`
+}

@@ -1,0 +1,28 @@
+meta {
+  name: Incoming Phone Numbers · Fetch
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/:Sid}.jso
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+docs {
+**Fetch a single DID assigned to the authenticated tenant**
+Tenant-scoped — a phone number that exists but belongs to a
+different account 404s with the same shape as a nonexistent
+number (no enumeration leak).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.fetch`
+}

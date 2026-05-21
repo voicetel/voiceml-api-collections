@@ -1,0 +1,2668 @@
+{
+  "info": {
+    "_postman_id": "voiceml-api-v0-6-3",
+    "name": "VoiceML API (v0.6.3)",
+    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.6.3** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for outbound voice and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.6/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "contact": {
+      "name": "VoiceTel",
+      "email": "support@voicetel.com",
+      "url": "https://voicetel.com"
+    },
+    "version": "0.6.3"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{accountSid}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Calls",
+      "description": "Call resources and subresources — originate, update, terminate, recordings, streams, SIPREC, transcriptions, events, and notifications.",
+      "item": [
+        {
+          "name": "Calls · List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls.json?To=&From=&Status=&ParentCallSid=&StartTime=&StartTime<=&StartTime>=&EndTime=&EndTime<=&EndTime>=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls.json"
+              ],
+              "query": [
+                {
+                  "key": "To",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "From",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Status",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "ParentCallSid",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "StartTime",
+                  "value": "",
+                  "description": "Calls started on this UTC date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "StartTime<",
+                  "value": "",
+                  "description": "Calls started strictly before this UTC date/time.",
+                  "disabled": true
+                },
+                {
+                  "key": "StartTime>",
+                  "value": "",
+                  "description": "Calls started strictly after this UTC date/time.",
+                  "disabled": true
+                },
+                {
+                  "key": "EndTime",
+                  "value": "",
+                  "description": "Calls ended on this UTC date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "EndTime<",
+                  "value": "",
+                  "description": "Calls ended strictly before this UTC date/time.",
+                  "disabled": true
+                },
+                {
+                  "key": "EndTime>",
+                  "value": "",
+                  "description": "Calls ended strictly after this UTC date/time.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List calls**\nPaginated list of call records for the given account. Filters\nmatch Twilio: `To`, `From`, `Status`, `ParentCallSid`,\n`StartTime` (bare = full UTC day), `StartTime<` (strict upper),\n`StartTime>` (strict lower), and the same triple for `EndTime`.\nFor backwards compatibility the legacy `StartTime>=` / `EndTime<=`\nSQL-style operators are also accepted at the handler. Pagination\nvia `Page` and `PageSize` (max 1000). `EndTime` filters\nrestrict the result set to terminal-status rows (an in-progress\ncall has no end time and cannot match an EndTime window).\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Create (originate)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Create (originate) a call**\nOriginates an outbound call via FreeSWITCH. The `To` and `From`\nnumbers are validated and normalised to E.164 against the\nauthenticated tenant's `phone_regions` list — set per-account in\nthe admin API. Empty list disables validation; multi-region\ntenants accept numbers valid in any listed region.\n`MachineDetection` is optional; omitting it skips AMD entirely.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"To\": \"\",\n  \"From\": \"\",\n  \"Method\": \"POST\",\n  \"FallbackMethod\": \"POST\",\n  \"StatusCallbackMethod\": \"POST\",\n  \"AsyncAmdStatusCallbackMethod\": \"POST\",\n  \"Record\": false,\n  \"RecordingStatusCallbackMethod\": \"POST\",\n  \"Timeout\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · List events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Events.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Events.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**List per-call lifecycle events (compat stub)**\nTwilio's fine-grained per-call event stream. callBroadcast\ndelivers equivalent data via `StatusCallback` (initiated /\nringing / answered / completed); this endpoint is mounted\nas a stub returning an empty list so SDK helpers iterate\ncleanly. The canonical event source is the customer's\n`StatusCallback` URL. Page/PageSize are accepted for SDK\nergonomics but have no effect on an empty list.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callEvents.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · List notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Notifications.json?Log=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Notifications.json"
+              ],
+              "query": [
+                {
+                  "key": "Log",
+                  "value": "",
+                  "description": "Twilio-parity parameter — 0 = error-level only, 1 =\nwarning-level + above. Accepted for SDK drop-in\ncompatibility; has no effect since VoiceML's per-call\nnotification stream is unimplemented (this endpoint is a\nstub returning an empty list).\n",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**List per-call notifications (compat stub)**\nTwilio's per-call alert log. callBroadcast doesn't track\nnotifications as a separate stream — relevant operator-side\nevents flow through Prometheus + structured logs. This\nendpoint is mounted as a stub so SDK helpers don't 404;\nthe response is always an empty list. Page/PageSize and Log\nare accepted for SDK ergonomics but have no effect on an\nempty list.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callNotifications.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · List recordings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Recordings.json"
+              ],
+              "query": [
+                {
+                  "key": "DateCreated",
+                  "value": "",
+                  "description": "Filter to recordings created on this UTC date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "DateCreated<",
+                  "value": "",
+                  "description": "Filter to recordings created strictly before this UTC date.",
+                  "disabled": true
+                },
+                {
+                  "key": "DateCreated>",
+                  "value": "",
+                  "description": "Filter to recordings created strictly after this UTC date.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**List recordings for one call**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Start recording",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Recordings.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**Start a recording mid-call**\nBegins a fresh recording on the live call leg via FreeSWITCH's\n`uuid_record`. The new Recording resource is returned in the\n201 response. Distinct from `Record=true` on `POST /Calls`,\nwhich captures from the start of the call.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PlayBeep\": true,\n  \"RecordingStatusCallbackMethod\": \"POST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Fetch recording",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Recordings",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch recording metadata for a specific call (call-scoped form)**\nSame JSON resource as `/Recordings/{RecordingSid}` but enforces\nthe call-scope from the URL path. 404 if the recording exists\nbut is attached to a different call.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Update recording",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Recordings",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update a mid-call recording's status**\nWires `uuid_record stop|pause|resume` on the live call leg.\nAll three transitions return 200 + the post-mutation\nRecording resource. Tenant-scoped: a RecordingSid that\nbelongs to a different account returns 404 without leaking\nexistence.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Status\": \"stopped\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Delete recording",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Recordings",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Delete a recording (row + local WAV + S3 object when present)**\nRemoves the memdb row, unlinks the on-disk WAV, and (when\n`RECORDING_S3_BUCKET` is configured) issues an S3 DeleteObject\non the archived copy. S3 deletion is best-effort: failure logs\nbut does not fail the API call (the bucket lifecycle policy is\nthe long-stop cleanup). Tenant-scoped — cross-tenant DELETE\nreturns 404 without affecting the row.\n\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · List SIPREC sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Siprec.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**List active SIPREC sessions for the call**\nReturns 0 or 1 entries — mod_siprec supports one mirror per\ncall uuid. Pagination envelope is the canonical Twilio shape.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Start SIPREC session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Siprec.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**Start a SIPREC session on the call (REST equivalent of `<Start><Siprec>`)**\nInvokes the `siprec` dialplan app via `uuid_broadcast` against\nthe configured connector profile. Returns the new Siprec\nresource with an SR-prefixed sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"StatusCallbackMethod\": \"POST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Fetch SIPREC session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Siprec",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a single SIPREC session by sid**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Update SIPREC session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Siprec",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update a SIPREC session — clears tracking only**\nStefanYohansson/mod_siprec doesn't expose a stop verb; the SRS\nrecording session continues until the call hangs up. This\nendpoint clears callBroadcast's session-tracking entry only.\nDocumented mod_siprec limitation.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Status\": \"stopped\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · List media streams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Streams.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**List active media streams for the call**\nReturns 0 or 1 entries — mod_audio_fork supports a single\nactive fork per call uuid, matching the slot model on the\ncallBroadcast tracker. Pagination envelope is the canonical\nTwilio shape so SDK auto-paginators round-trip cleanly.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Create media stream",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Streams.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**Start a media stream on the call (REST equivalent of `<Connect><Stream>`/`<Start><Stream>`)**\nIssues `uuid_audio_fork start` on the call leg via the same\nexecutor primitive the TwiML verbs use. Returns the new Stream\nresource with an MZ-prefixed sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Url\": \"\",\n  \"StatusCallbackMethod\": \"POST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Fetch media stream",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Streams",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a single stream by sid**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Update media stream",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Streams",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update a media stream — only Status=stopped is meaningful**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Status\": \"stopped\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · List transcriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Transcriptions.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**List active transcriptions for the call**\nReturns 0 or 1 entries. Pagination envelope is the canonical\nTwilio shape.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `transcriptions.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Create transcription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Transcriptions.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**Start real-time transcription on the call (REST equivalent of `<Start><Transcription>`)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `transcriptions.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"LanguageCode\": \"en-US\",\n  \"StatusCallbackMethod\": \"POST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Fetch transcription",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Transcriptions",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a single transcription by sid**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `transcriptions.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Update transcription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Transcriptions",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update a transcription — only Status=stopped is meaningful**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `transcriptions.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Status\": \"stopped\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Send user-defined message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/UserDefinedMessages.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "UserDefinedMessages.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**Send a user-defined message on a live call (NOT IMPLEMENTED)**\nTwilio's chat-style messages on a live call. Real\nmessage-passing infrastructure (a websocket on the\ncustomer-facing leg) that's out of scope for callBroadcast.\nReturns 501 with Twilio code 20501. The empty request body\nschema is declared so codegen tooling emits a method\nsignature consistent with Twilio's SDK.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `userDefinedMessages.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a call**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Update / terminate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update or terminate a live call**\nThree flows on the same endpoint (mirrors Twilio):\n  * `Status=completed|canceled` — terminate the call.\n  * `Twiml=<inline>` — execute inline TwiML on the live call\n    (wins over `Url` when both are present).\n  * `Url=…` — fetch new TwiML and execute it on the live call\n    (live redirect / hot swap).\nIf `Status` is present alongside any TwiML source, `Status`\nwins. The success response is the full Call resource — same\nshape `GET` returns — so SDK deserialisers round-trip.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Method\": \"POST\",\n  \"FallbackMethod\": \"POST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Delete record",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Delete a call record**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.delete`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Conferences",
+      "description": "Conference resources — list, fetch, update, manage participants, and list conference-scoped recordings.",
+      "item": [
+        {
+          "name": "Conferences · List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences.json?FriendlyName=&Status=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences.json"
+              ],
+              "query": [
+                {
+                  "key": "FriendlyName",
+                  "value": "",
+                  "description": "Filter to conferences with this exact FriendlyName.",
+                  "disabled": true
+                },
+                {
+                  "key": "Status",
+                  "value": "",
+                  "description": "Filter to conferences in this lifecycle state.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List active conferences for the account**\nReturns conferences currently active in mod_conference for\nthis tenant. Live query — no caching, always reflects the\nFreeSWITCH state of the moment. Conferences appear once a\nfirst participant joins (typically via TwiML\n`<Dial><Conference>`) and disappear as soon as the last\nparticipant leaves.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `conferences.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Conferences · List participants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants.json?Muted=&Hold=&Coaching=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences",
+                ":ConferenceSid",
+                "Participants.json"
+              ],
+              "query": [
+                {
+                  "key": "Muted",
+                  "value": "",
+                  "description": "Filter to participants with this Muted state.",
+                  "disabled": true
+                },
+                {
+                  "key": "Hold",
+                  "value": "",
+                  "description": "Filter to participants with this Hold state.",
+                  "disabled": true
+                },
+                {
+                  "key": "Coaching",
+                  "value": "",
+                  "description": "Filter to participants with this Coaching state.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "ConferenceSid",
+                  "value": "<ConferenceSid>",
+                  "description": "Path parameter: ConferenceSid"
+                }
+              ]
+            },
+            "description": "**List participants in a conference**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `participants.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Conferences · Fetch participant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants/:CallSid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences",
+                ":ConferenceSid",
+                "Participants",
+                ":CallSid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "ConferenceSid",
+                  "value": "<ConferenceSid>",
+                  "description": "Path parameter: ConferenceSid"
+                },
+                {
+                  "key": "CallSid}.jso",
+                  "value": "<CallSid}.jso>",
+                  "description": "Path parameter: CallSid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a single participant**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `participants.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Conferences · Update participant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants/:CallSid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences",
+                ":ConferenceSid",
+                "Participants",
+                ":CallSid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "ConferenceSid",
+                  "value": "<ConferenceSid>",
+                  "description": "Path parameter: ConferenceSid"
+                },
+                {
+                  "key": "CallSid}.jso",
+                  "value": "<CallSid}.jso>",
+                  "description": "Path parameter: CallSid}.jso"
+                }
+              ]
+            },
+            "description": "**Mute / unmute / hold a participant**\nAt least one of `Muted` or `Hold` must be set. Twilio's\n`HoldUrl` (custom hold-music URL) and `AnnounceUrl` are\nnot yet implemented.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `participants.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Conferences · Kick participant",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants/:CallSid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences",
+                ":ConferenceSid",
+                "Participants",
+                ":CallSid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "ConferenceSid",
+                  "value": "<ConferenceSid>",
+                  "description": "Path parameter: ConferenceSid"
+                },
+                {
+                  "key": "CallSid}.jso",
+                  "value": "<CallSid}.jso>",
+                  "description": "Path parameter: CallSid}.jso"
+                }
+              ]
+            },
+            "description": "**Kick a participant out of the conference**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `participants.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "Conferences · List recordings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences",
+                ":ConferenceSid",
+                "Recordings.json"
+              ],
+              "query": [
+                {
+                  "key": "DateCreated",
+                  "value": "",
+                  "description": "Filter to recordings created on this UTC date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "DateCreated<",
+                  "value": "",
+                  "description": "Filter to recordings created strictly before this UTC date.",
+                  "disabled": true
+                },
+                {
+                  "key": "DateCreated>",
+                  "value": "",
+                  "description": "Filter to recordings created strictly after this UTC date.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "ConferenceSid",
+                  "value": "<ConferenceSid>",
+                  "description": "Path parameter: ConferenceSid"
+                }
+              ]
+            },
+            "description": "**List recordings captured by a conference**\nReturns recordings created by `<Dial><Conference record=\"record-from-start\">`\nverbs that ran in this conference. Pagination envelope same as\n`/Recordings`.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `conferenceRecordings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Conferences · Fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a single conference**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `conferences.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Conferences · Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Conferences",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**End an active conference**\nv1 supports only `Status=completed` — kicks every participant\nand tears down the room. Twilio's other update fields\n(`Announce*`) are not yet implemented.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `conferences.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Status\": \"completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Queues",
+      "description": "Queue resources and members — create, list, fetch, update, delete queues; peek, fetch, and dequeue members.",
+      "item": [
+        {
+          "name": "Queues · List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List queues for the account (paged, FriendlyName ASC)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queues.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Create a queue**\nCreate a named queue. Idempotent — POSTing the same\nFriendlyName a second time returns the existing queue rather\nthan erroring (matches Twilio).\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queues.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"FriendlyName\": \"\",\n  \"MaxSize\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · List members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":QueueSid",
+                "Members.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "QueueSid",
+                  "value": "<QueueSid>",
+                  "description": "Path parameter: QueueSid"
+                }
+              ]
+            },
+            "description": "**List waiting members in a queue**\nReturned ordered by position; position 1 = longest waiting\n(front of queue).\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queueMembers.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Fetch member",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/:CallSid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":QueueSid",
+                "Members",
+                ":CallSid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "QueueSid",
+                  "value": "<QueueSid>",
+                  "description": "Path parameter: QueueSid"
+                },
+                {
+                  "key": "CallSid}.jso",
+                  "value": "<CallSid}.jso>",
+                  "description": "Path parameter: CallSid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a specific member by CallSid**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queueMembers.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Dequeue member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/:CallSid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":QueueSid",
+                "Members",
+                ":CallSid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "QueueSid",
+                  "value": "<QueueSid>",
+                  "description": "Path parameter: QueueSid"
+                },
+                {
+                  "key": "CallSid}.jso",
+                  "value": "<CallSid}.jso>",
+                  "description": "Path parameter: CallSid}.jso"
+                }
+              ]
+            },
+            "description": "**Dequeue a specific member to a TwiML URL**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queueMembers.dequeue`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Url\": \"\",\n  \"Method\": \"POST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Peek front member",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/Front.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":QueueSid",
+                "Members",
+                "Front.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "QueueSid",
+                  "value": "<QueueSid>",
+                  "description": "Path parameter: QueueSid"
+                }
+              ]
+            },
+            "description": "**Peek the longest-waiting member**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queueMembers.fetchFront`"
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Dequeue front member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/Front.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":QueueSid",
+                "Members",
+                "Front.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "QueueSid",
+                  "value": "<QueueSid>",
+                  "description": "Path parameter: QueueSid"
+                }
+              ]
+            },
+            "description": "**Dequeue the front member to a TwiML URL**\nPops the longest-waiting member and redirects their call to the\nURL in the body. The member's <Enqueue> wait-loop fetches that\nURL and runs the returned TwiML on their leg as continuation.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queueMembers.dequeueFront`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Url\": \"\",\n  \"Method\": \"POST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a queue**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queues.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update a queue (FriendlyName / MaxSize)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queues.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Queues · Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Queues",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Delete a queue**\nRefused with 409 if any members are still waiting — caller must\ndrain the queue first (matches Twilio's behaviour).\n\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queues.delete`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "description": "TwiML Application resources — create, list, fetch, update, and delete voice applications.",
+      "item": [
+        {
+          "name": "Applications · List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications.json?FriendlyName=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Applications.json"
+              ],
+              "query": [
+                {
+                  "key": "FriendlyName",
+                  "value": "",
+                  "description": "Filter to Applications with this exact FriendlyName.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List Applications for the account (paged, FriendlyName ASC)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `applications.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Applications · Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Applications.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Create an Application**\nPersistent named TwiML+callback bundle — referenced by\n`<Dial><Application>AP…</Application></Dial>`. The agent's\nDial verb resolves the SID, fetches voice_url, and runs the\nreturned TwiML on the call leg.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `applications.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Applications · Fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Applications",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch an Application**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `applications.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Applications · Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Applications",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update an Application (partial — only set fields are touched)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `applications.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Applications · Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Applications",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Delete an Application**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `applications.delete`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Recordings",
+      "description": "Account-scoped recording catalog — list, fetch, delete recordings and download WAV audio.",
+      "item": [
+        {
+          "name": "Recordings · List (account catalog)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=&CallSid=&ConferenceSid=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Recordings.json"
+              ],
+              "query": [
+                {
+                  "key": "DateCreated",
+                  "value": "",
+                  "description": "Filter to recordings created on this UTC date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "DateCreated<",
+                  "value": "",
+                  "description": "Filter to recordings created strictly before this UTC date.",
+                  "disabled": true
+                },
+                {
+                  "key": "DateCreated>",
+                  "value": "",
+                  "description": "Filter to recordings created strictly after this UTC date.",
+                  "disabled": true
+                },
+                {
+                  "key": "CallSid",
+                  "value": "",
+                  "description": "Filter to recordings whose CallSid equals this value.",
+                  "disabled": true
+                },
+                {
+                  "key": "ConferenceSid",
+                  "value": "",
+                  "description": "Filter to recordings whose ConferenceSid equals this value.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List recordings for the account**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `recordings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Recordings · Fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Recordings",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch recording metadata**\nReturns JSON metadata for the recording. The companion\n`.wav` path returns the audio bytes (or a 302/410 redirect\ndepending on archival state); see `recordings.fetchAudio`.\n\nTenant-scoped: a RecordingSid that belongs to a different\naccount returns `404` with the same shape as a nonexistent\nsid — no enumeration leak.\n\nSee [docs/aws-recordings.md](https://github.com/voicetel/callBroadcast/blob/main/docs/aws-recordings.md)\nfor the archival pipeline.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `recordings.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Recordings · Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Recordings",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Delete a recording (row + local WAV + S3 object when present)**\nRemoves the memdb row, unlinks the on-disk WAV, and (when\n`RECORDING_S3_BUCKET` is configured) issues an S3 DeleteObject\non the archived copy. S3 deletion is best-effort: failure logs\nbut does not fail the API call (the bucket lifecycle policy is\nthe long-stop cleanup). Tenant-scoped — cross-tenant DELETE\nreturns 404 without affecting the row.\n\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `recordings.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "Recordings · Download WAV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings/:Sid}.wa",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Recordings",
+                ":Sid}.wa"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.wa",
+                  "value": "<Sid}.wa>",
+                  "description": "Path parameter: Sid}.wa"
+                }
+              ]
+            },
+            "description": "**Fetch recording audio (WAV)**\nReturns the captured audio as `audio/wav` with one of three\ndelivery shapes:\n\n  * `200 OK` — local file present (typical for the first\n    `RECORDING_LOCAL_GRACE` window after the call ends).\n  * `302 Found` — local file cleaned up but archived to S3;\n    `Location` header points at a presigned URL with TTL\n    `RECORDING_PRESIGN_TTL`.\n  * `410 Gone` — local file gone AND no `s3_key` set\n    (typically: archival not configured + cleanup ran, or\n    archival failed and the WAV was lost).\n\nTenant-scoped: a RecordingSid that belongs to a different\naccount returns `404` with the same shape as a nonexistent\nsid — no enumeration leak.\n\nSee [docs/aws-recordings.md](https://github.com/voicetel/callBroadcast/blob/main/docs/aws-recordings.md)\nfor the archival pipeline.\n\n\nReturns `audio/wav` binary content, or **302** with a presigned S3 URL in `Location`.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `recordings.fetchAudio`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "IncomingPhoneNumbers",
+      "description": "Tenant self-serve phone numbers — list, create, fetch, update, and delete DIDs assigned to the account.",
+      "item": [
+        {
+          "name": "Incoming Phone Numbers · List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers.json?PhoneNumber=&FriendlyName=&Beta=&Origin=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "IncomingPhoneNumbers.json"
+              ],
+              "query": [
+                {
+                  "key": "PhoneNumber",
+                  "value": "",
+                  "description": "Exact-match filter on the E.164 phone number. Twilio's\ncanonical lookup pattern is\n`GET /IncomingPhoneNumbers?PhoneNumber=+1...` followed by\n`GET /IncomingPhoneNumbers/{sid}` using the `sid` from the\nlist result. SDK clients (twilio-python's\n`.list(phone_number=...)` etc.) issue this pattern; the\nfilter exists so it Just Works against callBroadcast.\nReturns a 0-or-1-row envelope.\n",
+                  "disabled": true
+                },
+                {
+                  "key": "FriendlyName",
+                  "value": "",
+                  "description": "Twilio-parity parameter. VoiceML doesn't model per-DID\nFriendlyName on phone_numbers (the field is empty in every\nview), so this parameter is accepted but does not narrow\nor widen the result set. Declared for SDK drop-in\ncompatibility.\n",
+                  "disabled": true
+                },
+                {
+                  "key": "Beta",
+                  "value": "",
+                  "description": "Twilio-parity parameter. VoiceML does not model the\ncarrier-supplied \"beta\" flag (no upstream beta-status\ndistinction), so this parameter is accepted but does not\nnarrow or widen the result set. Declared for SDK drop-in\ncompatibility.\n",
+                  "disabled": true
+                },
+                {
+                  "key": "Origin",
+                  "value": "",
+                  "description": "Twilio-parity parameter. VoiceML treats every assigned DID\nas locally provisioned (no twilio/hosted origin\ndistinction), so this parameter is accepted but does not\nnarrow or widen the result set. Declared for SDK drop-in\ncompatibility.\n",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List DIDs assigned to the authenticated tenant**\nReturns every DID currently bound to the authenticated\naccount. Tenant-scoped — only the caller's own rows are\nreturned; the global admin list endpoint is on the private\nlistener and not described here.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `incomingPhoneNumbers.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Incoming Phone Numbers · Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "IncomingPhoneNumbers.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Assign a DID to the authenticated tenant**\nTenant self-serve assignment of an E.164 DID. Idempotent on\nthe same tenant — re-POSTing the same `PhoneNumber` rebinds\nits voice routing without erroring (matches Twilio's update\nsemantics). Returns 409 when the number is already claimed\nby a different account.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `incomingPhoneNumbers.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PhoneNumber\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Incoming Phone Numbers · Fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "IncomingPhoneNumbers",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Fetch a single DID assigned to the authenticated tenant**\nTenant-scoped — a phone number that exists but belongs to a\ndifferent account 404s with the same shape as a nonexistent\nnumber (no enumeration leak).\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `incomingPhoneNumbers.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Incoming Phone Numbers · Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "IncomingPhoneNumbers",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Update voice routing on an assigned DID**\nOnly-set-fields-touched semantics. Tenant-scoped — a number\nassigned to a different account 404s.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `incomingPhoneNumbers.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Incoming Phone Numbers · Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/:Sid}.jso",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "IncomingPhoneNumbers",
+                ":Sid}.jso"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid}.jso",
+                  "value": "<Sid}.jso>",
+                  "description": "Path parameter: Sid}.jso"
+                }
+              ]
+            },
+            "description": "**Release a DID from the authenticated tenant**\nTenant-scoped — a number assigned to a different account 404s\nwithout affecting the row. Idempotent: 204 on success OR if\nthe number was already gone.\n\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `incomingPhoneNumbers.delete`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Diagnostics",
+      "description": "VoiceML extension endpoints — health probe and OpenAPI self-publish (no authentication required).",
+      "item": [
+        {
+          "name": "Diagnostics · Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "**Deep liveness probe**\nComposite probe with two-tier severity. Hard checks (memdb,\ndisk free space, FreeSWITCH process + required modules +\nSofia profile RUNNING) flip the LB-facing `ok` boolean.\nSoft checks (host CPU loadavg, memory pressure, FS workload\npercents, Raft cluster) surface in `warnings` only — the LB\nstays in rotation. Result cached 5 s on full success.\n\n\nNo authentication required.\n\nOperationId: `health.check`",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Diagnostics · OpenAPI spec (JSON)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/openapi.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "openapi.json"
+              ]
+            },
+            "description": "**OpenAPI spec (JSON)**\n\nNo authentication required.\n\nOperationId: `openapi.json`",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Diagnostics · OpenAPI spec (YAML)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/openapi.yaml",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "openapi.yaml"
+              ]
+            },
+            "description": "**OpenAPI spec (YAML)**\n\nNo authentication required.\n\nOperationId: `openapi.yaml`",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Diagnostics · OpenAPI spec (YML alias)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/openapi.yml",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "openapi.yml"
+              ]
+            },
+            "description": "**OpenAPI spec (YAML, .yml alias)**\nAlias for `/openapi.yaml`. Same response, same content type.\n\nNo authentication required.\n\nOperationId: `openapi.yml`",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://voiceml.voicetel.com",
+      "type": "string"
+    },
+    {
+      "key": "accountSid",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

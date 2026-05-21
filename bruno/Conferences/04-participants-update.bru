@@ -1,0 +1,37 @@
+meta {
+  name: Conferences · Update participant
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants/:CallSid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  ConferenceSid: <ConferenceSid>
+  CallSid}.jso: <CallSid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Mute / unmute / hold a participant**
+At least one of `Muted` or `Hold` must be set. Twilio's
+`HoldUrl` (custom hold-music URL) and `AnnounceUrl` are
+not yet implemented.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `participants.update`
+}

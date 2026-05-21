@@ -1,0 +1,36 @@
+meta {
+  name: Queues · Dequeue member
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/:CallSid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  QueueSid: <QueueSid>
+  CallSid}.jso: <CallSid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Url": "",
+  "Method": "POST"
+}
+}
+
+docs {
+**Dequeue a specific member to a TwiML URL**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `queueMembers.dequeue`
+}

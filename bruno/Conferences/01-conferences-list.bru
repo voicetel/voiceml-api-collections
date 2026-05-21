@@ -1,0 +1,35 @@
+meta {
+  name: Conferences · List
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~FriendlyName: 
+  ~Status: 
+}
+
+docs {
+**List active conferences for the account**
+Returns conferences currently active in mod_conference for
+this tenant. Live query — no caching, always reflects the
+FreeSWITCH state of the moment. Conferences appear once a
+first participant joins (typically via TwiML
+`<Dial><Conference>`) and disappear as soon as the last
+participant leaves.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conferences.list`
+}

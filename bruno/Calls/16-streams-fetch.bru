@@ -1,0 +1,25 @@
+meta {
+  name: Calls · Fetch media stream
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams/:Sid}.jso
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+  Sid}.jso: <Sid}.jso>
+}
+
+docs {
+**Fetch a single stream by sid**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `streams.fetch`
+}

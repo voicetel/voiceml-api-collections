@@ -1,0 +1,29 @@
+meta {
+  name: Calls · List media streams
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+docs {
+**List active media streams for the call**
+Returns 0 or 1 entries — mod_audio_fork supports a single
+active fork per call uuid, matching the slot model on the
+callBroadcast tracker. Pagination envelope is the canonical
+Twilio shape so SDK auto-paginators round-trip cleanly.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `streams.list`
+}

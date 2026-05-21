@@ -1,0 +1,38 @@
+meta {
+  name: Queues · Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "FriendlyName": "",
+  "MaxSize": 0
+}
+}
+
+docs {
+**Create a queue**
+Create a named queue. Idempotent — POSTing the same
+FriendlyName a second time returns the existing queue rather
+than erroring (matches Twilio).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `queues.create`
+}

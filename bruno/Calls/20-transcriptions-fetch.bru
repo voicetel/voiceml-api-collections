@@ -1,0 +1,25 @@
+meta {
+  name: Calls · Fetch transcription
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions/:Sid}.jso
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+  Sid}.jso: <Sid}.jso>
+}
+
+docs {
+**Fetch a single transcription by sid**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `transcriptions.fetch`
+}

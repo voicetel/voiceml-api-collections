@@ -1,0 +1,26 @@
+meta {
+  name: Applications · Delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications/:Sid}.jso
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+docs {
+**Delete an Application**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `applications.delete`
+}

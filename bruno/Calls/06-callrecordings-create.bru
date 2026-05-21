@@ -1,0 +1,40 @@
+meta {
+  name: Calls · Start recording
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "PlayBeep": true,
+  "RecordingStatusCallbackMethod": "POST"
+}
+}
+
+docs {
+**Start a recording mid-call**
+Begins a fresh recording on the live call leg via FreeSWITCH's
+`uuid_record`. The new Recording resource is returned in the
+201 response. Distinct from `Record=true` on `POST /Calls`,
+which captures from the start of the call.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `callRecordings.create`
+}

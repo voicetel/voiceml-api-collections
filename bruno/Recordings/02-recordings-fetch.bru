@@ -1,0 +1,35 @@
+meta {
+  name: Recordings · Fetch
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings/:Sid}.jso
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+docs {
+**Fetch recording metadata**
+Returns JSON metadata for the recording. The companion
+`.wav` path returns the audio bytes (or a 302/410 redirect
+depending on archival state); see `recordings.fetchAudio`.
+
+Tenant-scoped: a RecordingSid that belongs to a different
+account returns `404` with the same shape as a nonexistent
+sid — no enumeration leak.
+
+See [docs/aws-recordings.md](https://github.com/voicetel/callBroadcast/blob/main/docs/aws-recordings.md)
+for the archival pipeline.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `recordings.fetch`
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Recordings · List (account catalog)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~DateCreated: 
+  ~DateCreated<: 
+  ~DateCreated>: 
+  ~CallSid: 
+  ~ConferenceSid: 
+}
+
+docs {
+**List recordings for the account**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `recordings.list`
+}

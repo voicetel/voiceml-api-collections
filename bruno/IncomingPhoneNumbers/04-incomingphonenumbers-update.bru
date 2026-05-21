@@ -1,0 +1,35 @@
+meta {
+  name: Incoming Phone Numbers · Update
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/:Sid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update voice routing on an assigned DID**
+Only-set-fields-touched semantics. Tenant-scoped — a number
+assigned to a different account 404s.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.update`
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Calls · List SIPREC sessions
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+docs {
+**List active SIPREC sessions for the call**
+Returns 0 or 1 entries — mod_siprec supports one mirror per
+call uuid. Pagination envelope is the canonical Twilio shape.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `siprec.list`
+}

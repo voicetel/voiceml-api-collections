@@ -1,0 +1,29 @@
+meta {
+  name: Queues · Delete
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:Sid}.jso
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+docs {
+**Delete a queue**
+Refused with 409 if any members are still waiting — caller must
+drain the queue first (matches Twilio's behaviour).
+
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `queues.delete`
+}

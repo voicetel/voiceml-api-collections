@@ -1,0 +1,27 @@
+meta {
+  name: Queues · List members
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  QueueSid: <QueueSid>
+}
+
+docs {
+**List waiting members in a queue**
+Returned ordered by position; position 1 = longest waiting
+(front of queue).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `queueMembers.list`
+}

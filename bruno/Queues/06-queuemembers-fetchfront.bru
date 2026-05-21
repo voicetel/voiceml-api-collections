@@ -1,0 +1,24 @@
+meta {
+  name: Queues · Peek front member
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/Front.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  QueueSid: <QueueSid>
+}
+
+docs {
+**Peek the longest-waiting member**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `queueMembers.fetchFront`
+}

@@ -1,0 +1,21 @@
+auth {
+  mode: basic
+}
+
+auth:basic {
+  username: {{accountSid}}
+  password: {{apiKey}}
+}
+
+vars {
+  baseUrl: https://voiceml.voicetel.com
+}
+
+docs {
+# VoiceML API — Bruno Collection
+
+Version 0.6.3. Reference docs: https://voicetel.com/docs/api/v0.6/voiceml/
+
+HTTP Basic Auth is wired at the collection level (username = accountSid, password = apiKey).
+Diagnostic endpoints override auth to none.
+}

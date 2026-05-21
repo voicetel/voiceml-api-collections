@@ -1,0 +1,41 @@
+meta {
+  name: Calls · Update recording
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings/:Sid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+  Sid}.jso: <Sid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Status": "stopped"
+}
+}
+
+docs {
+**Update a mid-call recording's status**
+Wires `uuid_record stop|pause|resume` on the live call leg.
+All three transitions return 200 + the post-mutation
+Recording resource. Tenant-scoped: a RecordingSid that
+belongs to a different account returns 404 without leaking
+existence.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `callRecordings.update`
+}

@@ -1,0 +1,48 @@
+meta {
+  name: Calls · Create (originate)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "To": "",
+  "From": "",
+  "Method": "POST",
+  "FallbackMethod": "POST",
+  "StatusCallbackMethod": "POST",
+  "AsyncAmdStatusCallbackMethod": "POST",
+  "Record": false,
+  "RecordingStatusCallbackMethod": "POST",
+  "Timeout": 60
+}
+}
+
+docs {
+**Create (originate) a call**
+Originates an outbound call via FreeSWITCH. The `To` and `From`
+numbers are validated and normalised to E.164 against the
+authenticated tenant's `phone_regions` list — set per-account in
+the admin API. Empty list disables validation; multi-region
+tenants accept numbers valid in any listed region.
+`MachineDetection` is optional; omitting it skips AMD entirely.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `calls.create`
+}

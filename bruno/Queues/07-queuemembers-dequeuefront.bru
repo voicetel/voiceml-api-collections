@@ -1,0 +1,39 @@
+meta {
+  name: Queues · Dequeue front member
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/Front.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  QueueSid: <QueueSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Url": "",
+  "Method": "POST"
+}
+}
+
+docs {
+**Dequeue the front member to a TwiML URL**
+Pops the longest-waiting member and redirects their call to the
+URL in the body. The member's <Enqueue> wait-loop fetches that
+URL and runs the returned TwiML on their leg as continuation.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `queueMembers.dequeueFront`
+}

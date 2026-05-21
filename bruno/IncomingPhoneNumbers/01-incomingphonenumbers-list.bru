@@ -1,0 +1,35 @@
+meta {
+  name: Incoming Phone Numbers · List
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~PhoneNumber: 
+  ~FriendlyName: 
+  ~Beta: 
+  ~Origin: 
+}
+
+docs {
+**List DIDs assigned to the authenticated tenant**
+Returns every DID currently bound to the authenticated
+account. Tenant-scoped — only the caller's own rows are
+returned; the global admin list endpoint is on the private
+listener and not described here.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.list`
+}

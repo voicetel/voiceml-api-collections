@@ -1,0 +1,39 @@
+meta {
+  name: Incoming Phone Numbers · Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "PhoneNumber": ""
+}
+}
+
+docs {
+**Assign a DID to the authenticated tenant**
+Tenant self-serve assignment of an E.164 DID. Idempotent on
+the same tenant — re-POSTing the same `PhoneNumber` rebinds
+its voice routing without erroring (matches Twilio's update
+semantics). Returns 409 when the number is already claimed
+by a different account.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.create`
+}

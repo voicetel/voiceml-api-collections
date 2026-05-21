@@ -1,0 +1,38 @@
+meta {
+  name: Conferences · Update
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:Sid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Status": "completed"
+}
+}
+
+docs {
+**End an active conference**
+v1 supports only `Status=completed` — kicks every participant
+and tears down the room. Twilio's other update fields
+(`Announce*`) are not yet implemented.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conferences.update`
+}

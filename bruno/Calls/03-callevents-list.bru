@@ -1,0 +1,32 @@
+meta {
+  name: Calls · List events
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Events.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+docs {
+**List per-call lifecycle events (compat stub)**
+Twilio's fine-grained per-call event stream. callBroadcast
+delivers equivalent data via `StatusCallback` (initiated /
+ringing / answered / completed); this endpoint is mounted
+as a stub returning an empty list so SDK helpers iterate
+cleanly. The canonical event source is the customer's
+`StatusCallback` URL. Page/PageSize are accepted for SDK
+ergonomics but have no effect on an empty list.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `callEvents.list`
+}

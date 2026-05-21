@@ -1,0 +1,32 @@
+meta {
+  name: Queues · Update
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:Sid}.jso
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid}.jso: <Sid}.jso>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a queue (FriendlyName / MaxSize)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `queues.update`
+}
