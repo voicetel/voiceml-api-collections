@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "VoiceML Twilio-compatible REST API",
-    "version": "0.6.3",
+    "version": "0.6.4",
     "summary": "Outbound voice + AMD service with Twilio-shaped REST surface",
     "description": "VoiceML (development name `callBroadcast`) exposes the Twilio Programmable\nVoice Calls REST API surface so existing Twilio SDKs (`twilio-node`,\n`twilio-python`, `twilio-go`, ...) work against it as a drop-in replacement.\nThe wire shape, authentication model, error codes, and pagination envelope\nall match Twilio's documented behaviour.\n\nURL format: Twilio's canonical URL form ends with `.json` (e.g.\n`/Calls/{Sid}.json`). callBroadcast accepts BOTH the `.json`-suffixed and\nthe unsuffixed form \u2014 the server strips a trailing `.json`/`.xml`/`.wav`\nsuffix before routing (see `WrapWithFormatSuffix`). The spec documents the\n`.json` form so SDKs generated against it produce strict-Twilio-shape\nURLs out of the box; existing clients that omit `.json` continue to work\nunchanged.\n\nAuthentication is per-tenant HTTP Basic:\n  * Username = `:AccountSid` (the URL path parameter, Twilio-format\n    AC + 32 hex chars). Same value the Twilio SDK validates in its\n    constructor \u2014 drop-in compatible.\n  * Password = the per-account API key.\nThe same key is used to compute `X-Twilio-Signature` on outbound webhooks.\n\nAccount management (create / rotate / disable / delete) is NOT exposed on\nthis public listener \u2014 it lives on a private observability listener\ndocumented separately.\n",
     "contact": {
@@ -219,6 +219,15 @@
           "maximum": 1000,
           "default": 50
         }
+      },
+      "PageToken": {
+        "name": "PageToken",
+        "in": "query",
+        "required": false,
+        "description": "The page token. This is provided by the API.",
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "schemas": {
@@ -237,7 +246,7 @@
         "properties": {
           "sid": {
             "type": "string",
-            "example": "CA00000000000000000000000000000000"
+            "example": "CAffffffffffffffffffffffffffffffff"
           },
           "account_sid": {
             "type": "string",
@@ -430,7 +439,7 @@
           "sid": {
             "type": "string",
             "pattern": "^CF[a-f0-9]{32}$",
-            "example": "CF1234567890abcdef1234567890abcdef"
+            "example": "CFffffffffffffffffffffffffffffffff"
           },
           "account_sid": {
             "type": "string"
@@ -1020,7 +1029,7 @@
         "properties": {
           "sid": {
             "type": "string",
-            "example": "RE1234567890abcdef1234567890abcdef"
+            "example": "REffffffffffffffffffffffffffffffff"
           },
           "account_sid": {
             "type": "string"
@@ -1464,7 +1473,7 @@
           "sid": {
             "type": "string",
             "pattern": "^MZ[a-f0-9]{32}$",
-            "example": "MZ1234567890abcdef1234567890abcdef"
+            "example": "MZffffffffffffffffffffffffffffffff"
           },
           "account_sid": {
             "type": "string"
@@ -1509,7 +1518,7 @@
           "sid": {
             "type": "string",
             "pattern": "^SR[a-f0-9]{32}$",
-            "example": "SR1234567890abcdef1234567890abcdef"
+            "example": "SRffffffffffffffffffffffffffffffff"
           },
           "account_sid": {
             "type": "string"
@@ -1557,7 +1566,7 @@
           "sid": {
             "type": "string",
             "pattern": "^RT[a-f0-9]{32}$",
-            "example": "RT1234567890abcdef1234567890abcdef"
+            "example": "RTffffffffffffffffffffffffffffffff"
           },
           "account_sid": {
             "type": "string"
@@ -2048,6 +2057,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -2268,6 +2280,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -2437,6 +2452,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -2642,6 +2660,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -2795,6 +2816,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -3133,6 +3157,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -3350,6 +3377,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -3417,6 +3447,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -4239,6 +4272,9 @@
             "$ref": "#/components/parameters/PageSize"
           },
           {
+            "$ref": "#/components/parameters/PageToken"
+          },
+          {
             "name": "Log",
             "in": "query",
             "required": false,
@@ -4325,6 +4361,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -4483,6 +4522,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -4885,6 +4927,9 @@
           },
           {
             "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           },
           {
             "name": "PhoneNumber",

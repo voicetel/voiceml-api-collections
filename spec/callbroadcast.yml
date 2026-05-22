@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: VoiceML Twilio-compatible REST API
-  version: "0.6.3"
+  version: "0.6.4"
   summary: Outbound voice + AMD service with Twilio-shaped REST surface
   description: |
     VoiceML (development name `callBroadcast`) exposes the Twilio Programmable
@@ -269,12 +269,20 @@ components:
         maximum: 1000
         default: 50
 
+    PageToken:
+      name: PageToken
+      in: query
+      required: false
+      description: "The page token. This is provided by the API."
+      schema:
+        type: string
+
   schemas:
     Call:
       type: object
       required: [sid, account_sid, status, direction, api_version, uri, date_created, date_updated]
       properties:
-        sid:                  { type: string, example: "CA00000000000000000000000000000000" }
+        sid:                  { type: string, example: "CAffffffffffffffffffffffffffffffff" }
         account_sid:          { type: string, example: "ACffffffffffffffffffffffffffffffff" }
         api_version:          { type: string, example: "2010-04-01" }
         to:                   { type: string, example: "+18005551234" }
@@ -337,7 +345,7 @@ components:
       type: object
       required: [sid, account_sid, friendly_name, status, api_version, uri]
       properties:
-        sid:           { type: string, pattern: '^CF[a-f0-9]{32}$', example: "CF1234567890abcdef1234567890abcdef" }
+        sid:           { type: string, pattern: '^CF[a-f0-9]{32}$', example: "CFffffffffffffffffffffffffffffffff" }
         account_sid:   { type: string }
         friendly_name: { type: string, example: "incident-42" }
         status:
@@ -558,7 +566,7 @@ components:
       type: object
       required: [sid, account_sid, call_sid, status]
       properties:
-        sid:           { type: string, example: "RE1234567890abcdef1234567890abcdef" }
+        sid:           { type: string, example: "REffffffffffffffffffffffffffffffff" }
         account_sid:   { type: string }
         call_sid:      { type: string }
         conference_sid:
@@ -714,7 +722,7 @@ components:
       type: object
       required: [sid, account_sid, call_sid, status, api_version, uri]
       properties:
-        sid:          { type: string, pattern: '^MZ[a-f0-9]{32}$', example: "MZ1234567890abcdef1234567890abcdef" }
+        sid:          { type: string, pattern: '^MZ[a-f0-9]{32}$', example: "MZffffffffffffffffffffffffffffffff" }
         account_sid:  { type: string }
         call_sid:     { type: string }
         name:         { type: string, description: "Operator-supplied label for the stream; round-trips on the resource." }
@@ -729,7 +737,7 @@ components:
       type: object
       required: [sid, account_sid, call_sid, status, api_version, uri]
       properties:
-        sid:            { type: string, pattern: '^SR[a-f0-9]{32}$', example: "SR1234567890abcdef1234567890abcdef" }
+        sid:            { type: string, pattern: '^SR[a-f0-9]{32}$', example: "SRffffffffffffffffffffffffffffffff" }
         account_sid:    { type: string }
         call_sid:       { type: string }
         name:           { type: string }
@@ -750,7 +758,7 @@ components:
         transcription resource — events are streamed via the
         StatusCallback URL while the call is live.
       properties:
-        sid:                  { type: string, pattern: '^RT[a-f0-9]{32}$', example: "RT1234567890abcdef1234567890abcdef" }
+        sid:                  { type: string, pattern: '^RT[a-f0-9]{32}$', example: "RTffffffffffffffffffffffffffffffff" }
         account_sid:          { type: string }
         call_sid:             { type: string }
         name:                 { type: string }
@@ -995,6 +1003,7 @@ paths:
         - { name: "EndTime>",    in: query, schema: { type: string, format: date-time }, description: "Calls ended strictly after this UTC date/time." }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of calls.
@@ -1115,6 +1124,7 @@ paths:
         - { name: Status, in: query, schema: { type: string, enum: [init, in-progress, completed] }, description: "Filter to conferences in this lifecycle state." }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of conferences.
@@ -1190,6 +1200,7 @@ paths:
         - { name: Coaching, in: query, schema: { type: boolean }, description: "Filter to participants with this Coaching state." }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of participants.
@@ -1293,6 +1304,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of queues.
@@ -1371,6 +1383,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Members list.
@@ -1522,6 +1535,7 @@ paths:
         - { name: FriendlyName, in: query, schema: { type: string }, description: "Filter to Applications with this exact FriendlyName." }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of Applications.
@@ -1600,6 +1614,7 @@ paths:
         - { name: ConferenceSid, in: query, schema: { type: string, pattern: "^CF[0-9a-fA-F]{32}$" }, description: "Filter to recordings whose ConferenceSid equals this value." }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of recordings.
@@ -1622,6 +1637,7 @@ paths:
         - { name: "DateCreated>", in: query, schema: { type: string, format: date-time }, description: "Filter to recordings created strictly after this UTC date." }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of recordings.
@@ -2001,6 +2017,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
         - name: Log
           in: query
           required: false
@@ -2047,6 +2064,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Empty list (always — stub).
@@ -2119,6 +2137,7 @@ paths:
         - { name: "DateCreated>", in: query, schema: { type: string, format: date-time }, description: "Filter to recordings created strictly after this UTC date." }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
       responses:
         '200':
           description: Page of conference-scoped recordings.
@@ -2388,6 +2407,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
         - name: PhoneNumber
           in: query
           required: false

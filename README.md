@@ -2,7 +2,7 @@
 
 Official **Postman** and **Bruno** collections for the [VoiceML REST API](https://voicetel.com/docs/api/v0.6/voiceml/) — Twilio-compatible outbound voice and AMD, every endpoint pre-wired with HTTP Basic Auth.
 
-![Version](https://img.shields.io/badge/version-0.6.3-blue)
+![Version](https://img.shields.io/badge/version-0.6.4-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Postman](https://img.shields.io/badge/Postman-Collection_v2.1-orange)
 ![Bruno](https://img.shields.io/badge/Bruno-supported-purple)

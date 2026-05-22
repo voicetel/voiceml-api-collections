@@ -1,15 +1,15 @@
 {
   "info": {
-    "_postman_id": "voiceml-api-v0-6-3",
-    "name": "VoiceML API (v0.6.3)",
-    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.6.3** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for outbound voice and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.6/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
+    "_postman_id": "voiceml-api-v0-6-4",
+    "name": "VoiceML API (v0.6.4)",
+    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.6.4** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for outbound voice and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.6/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "contact": {
       "name": "VoiceTel",
       "email": "support@voicetel.com",
       "url": "https://voicetel.com"
     },
-    "version": "0.6.3"
+    "version": "0.6.4"
   },
   "auth": {
     "type": "basic",

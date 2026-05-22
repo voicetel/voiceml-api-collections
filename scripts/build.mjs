@@ -398,8 +398,8 @@ for (const { folder, opId, method, path, op } of operations) {
 
 const collection = {
   info: {
-    _postman_id: 'voiceml-api-v0-6-3',
-    name: 'VoiceML API (v0.6.3)',
+    _postman_id: `voiceml-api-v${spec.info.version.replace(/\./g, '-')}`,
+    name: `VoiceML API (v${spec.info.version})`,
     description: [
       '# VoiceML API — Official Postman Collection',
       '',
@@ -617,7 +617,7 @@ for (const name of FOLDER_ORDER) {
 
 const brunoJson = {
   version: '1',
-  name: 'VoiceML API (v0.6.3)',
+  name: `VoiceML API (v${spec.info.version})`,
   type: 'collection',
   ignore: ['node_modules', '.git'],
   auth: {
