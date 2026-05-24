@@ -1,17 +1,18 @@
 meta {
-  name: Recordings · Delete
+  name: Calls · Delete recording
   type: http
-  seq: 3
+  seq: 10
 }
 
 delete {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings/:Sid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings/:Sid.json
   body: none
   auth: inherit
 }
 
 params:path {
   AccountSid: {{accountSid}}
+  CallSid: <CallSid>
   Sid: <Sid>
 }
 
@@ -29,5 +30,5 @@ Returns **204 No Content** on success — no response body.
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `recordings.delete`
+OperationId: `callRecordings.delete`
 }

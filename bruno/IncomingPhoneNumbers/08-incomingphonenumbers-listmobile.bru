@@ -1,0 +1,34 @@
+meta {
+  name: IncomingPhoneNumbers incomingPhoneNumbers.listMobile
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/Mobile.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~PhoneNumber: 
+  ~FriendlyName: 
+  ~Beta: 
+  ~Origin: 
+}
+
+docs {
+**List mobile DIDs assigned to the authenticated tenant**
+Twilio type-specific list alias. VoiceML does not track carrier
+mobile classification on BYO DIDs — this endpoint returns an
+empty page unless future metadata is added.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.listMobile`
+}

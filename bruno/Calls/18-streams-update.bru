@@ -1,19 +1,19 @@
 meta {
-  name: Queues · Dequeue member
+  name: Calls · Update media stream
   type: http
-  seq: 5
+  seq: 18
 }
 
 post {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members/:CallSid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams/:Sid.json
   body: json
   auth: inherit
 }
 
 params:path {
   AccountSid: {{accountSid}}
-  QueueSid: <QueueSid>
   CallSid: <CallSid>
+  Sid: <Sid>
 }
 
 headers {
@@ -22,15 +22,14 @@ headers {
 
 body:json {
 {
-  "Url": "",
-  "Method": "POST"
+  "Status": "stopped"
 }
 }
 
 docs {
-**Dequeue a specific member to a TwiML URL**
+**Update a media stream — only Status=stopped is meaningful**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `queueMembers.dequeue`
+OperationId: `streams.update`
 }

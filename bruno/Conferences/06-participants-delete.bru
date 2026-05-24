@@ -1,0 +1,25 @@
+meta {
+  name: Conferences · Kick participant
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants/:CallSid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  ConferenceSid: <ConferenceSid>
+  CallSid: <CallSid>
+}
+
+docs {
+**Kick a participant out of the conference**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `participants.delete`
+}

@@ -1,0 +1,34 @@
+meta {
+  name: Calls notifications.list
+  type: http
+  seq: 27
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Notifications.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~MessageDate: 
+  ~MessageDate<: 
+  ~MessageDate>: 
+  ~Log: 
+}
+
+docs {
+**List account notifications (compat stub)**
+Account-wide notification log. VoiceML delivers events via
+StatusCallback — this endpoint returns an empty list so SDK
+helpers do not 404.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `notifications.list`
+}

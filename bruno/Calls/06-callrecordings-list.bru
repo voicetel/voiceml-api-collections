@@ -1,32 +1,30 @@
 meta {
-  name: Recordings · List (account catalog)
+  name: Calls · List recordings
   type: http
-  seq: 1
+  seq: 6
 }
 
 get {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings.json
   body: none
   auth: inherit
 }
 
 params:path {
   AccountSid: {{accountSid}}
+  CallSid: <CallSid>
 }
 
 query {
   ~DateCreated: 
   ~DateCreated<: 
   ~DateCreated>: 
-  ~CallSid: 
-  ~ConferenceSid: 
-  ~IncludeSoftDeleted: 
 }
 
 docs {
-**List recordings for the account**
+**List recordings for one call**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `recordings.list`
+OperationId: `callRecordings.list`
 }

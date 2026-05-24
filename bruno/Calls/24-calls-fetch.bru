@@ -1,11 +1,11 @@
 meta {
-  name: Queues · Fetch
+  name: Calls · Fetch
   type: http
-  seq: 8
+  seq: 24
 }
 
 get {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:Sid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid.json
   body: none
   auth: inherit
 }
@@ -16,9 +16,9 @@ params:path {
 }
 
 docs {
-**Fetch a queue**
+**Fetch a call**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `queues.fetch`
+OperationId: `calls.fetch`
 }

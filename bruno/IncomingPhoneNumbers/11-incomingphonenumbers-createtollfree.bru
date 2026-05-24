@@ -1,0 +1,36 @@
+meta {
+  name: IncomingPhoneNumbers incomingPhoneNumbers.createTollFree
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/TollFree.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "PhoneNumber": ""
+}
+}
+
+docs {
+**Assign a toll-free DID to the authenticated tenant**
+Twilio type-specific create alias — same semantics as
+`POST /IncomingPhoneNumbers`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.createTollFree`
+}

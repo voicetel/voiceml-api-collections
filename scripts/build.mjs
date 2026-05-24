@@ -225,11 +225,11 @@ function postmanUrl(pathTemplate, query) {
   const segments = pathTemplate
     .split('/')
     .filter(Boolean)
-    .map((seg) => (seg.startsWith('{') ? `:${seg.slice(1, -1)}` : seg));
+    .map((seg) => seg.replace(/\{([^}]+)\}/g, ':$1'));
   const variable = [];
   for (const seg of pathTemplate.split('/').filter(Boolean)) {
-    if (seg.startsWith('{')) {
-      const name = seg.slice(1, -1);
+    for (const m of seg.matchAll(/\{([^}]+)\}/g)) {
+      const name = m[1];
       variable.push({
         key: name,
         value: pathParamValue(name),
@@ -511,7 +511,9 @@ function bruHeaderBlock(headers) {
 function bruPathParams(pathTemplate) {
   const params = [];
   for (const seg of pathTemplate.split('/').filter(Boolean)) {
-    if (seg.startsWith('{')) params.push(seg.slice(1, -1));
+    for (const m of seg.matchAll(/\{([^}]+)\}/g)) {
+      params.push(m[1]);
+    }
   }
   return params;
 }
@@ -531,7 +533,7 @@ function bruUrl(pathTemplate, query) {
     pathTemplate
       .split('/')
       .filter(Boolean)
-      .map((seg) => (seg.startsWith('{') ? `:${seg.slice(1, -1)}` : seg))
+      .map((seg) => seg.replace(/\{([^}]+)\}/g, ':$1'))
       .join('/');
   if (!query.length) return url;
   const qp = query

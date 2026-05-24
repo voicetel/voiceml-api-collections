@@ -1,0 +1,29 @@
+meta {
+  name: Calls callNotifications.fetch
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Notifications/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a per-call notification (compat stub)**
+Per-call notification fetch. VoiceML does not persist a
+notification stream — the list endpoint is always empty and
+individual fetches return 404.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `callNotifications.fetch`
+}

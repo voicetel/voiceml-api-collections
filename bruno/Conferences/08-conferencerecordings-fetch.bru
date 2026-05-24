@@ -1,0 +1,29 @@
+meta {
+  name: Conferences conferenceRecordings.fetch
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Recordings/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  ConferenceSid: <ConferenceSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a conference-scoped recording**
+Same JSON resource as `/Recordings/{RecordingSid}` but enforces
+the conference scope from the URL path. 404 if the recording exists
+but is attached to a different conference.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conferenceRecordings.fetch`
+}

@@ -1,0 +1,41 @@
+meta {
+  name: Conferences participants.create
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  ConferenceSid: <ConferenceSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "From": "",
+  "To": "",
+  "StartConferenceOnEnter": true,
+  "EndConferenceOnExit": false
+}
+}
+
+docs {
+**Dial a participant into a conference**
+Places an outbound call from `From` to `To` that joins the named
+conference on answer via inline TwiML. Returns immediately with
+`status=queued` while the leg is ringing.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `participants.create`
+}

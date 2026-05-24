@@ -1,0 +1,38 @@
+meta {
+  name: Calls · Start SIPREC session
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "StatusCallbackMethod": "POST"
+}
+}
+
+docs {
+**Start a SIPREC session on the call (REST equivalent of `<Start><Siprec>`)**
+Invokes the `siprec` dialplan app via `uuid_broadcast` against
+the configured connector profile. Returns the new Siprec
+resource with an SR-prefixed sid.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `siprec.create`
+}

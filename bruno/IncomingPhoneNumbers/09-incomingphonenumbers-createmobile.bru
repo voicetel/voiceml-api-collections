@@ -1,0 +1,36 @@
+meta {
+  name: IncomingPhoneNumbers incomingPhoneNumbers.createMobile
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/Mobile.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "PhoneNumber": ""
+}
+}
+
+docs {
+**Assign a mobile DID to the authenticated tenant**
+Twilio type-specific create alias — same semantics as
+`POST /IncomingPhoneNumbers`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.createMobile`
+}

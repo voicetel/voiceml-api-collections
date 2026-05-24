@@ -1,11 +1,11 @@
 meta {
-  name: Queues · Fetch
+  name: Conferences · Fetch
   type: http
-  seq: 8
+  seq: 11
 }
 
 get {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:Sid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:Sid.json
   body: none
   auth: inherit
 }
@@ -16,9 +16,9 @@ params:path {
 }
 
 docs {
-**Fetch a queue**
+**Fetch a single conference**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `queues.fetch`
+OperationId: `conferences.fetch`
 }

@@ -1,0 +1,25 @@
+meta {
+  name: Conferences · Fetch participant
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants/:CallSid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  ConferenceSid: <ConferenceSid>
+  CallSid: <CallSid>
+}
+
+docs {
+**Fetch a single participant**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `participants.fetch`
+}

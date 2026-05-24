@@ -1,0 +1,29 @@
+meta {
+  name: Calls · Fetch recording
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch recording metadata for a specific call (call-scoped form)**
+Same JSON resource as `/Recordings/{RecordingSid}` but enforces
+the call-scope from the URL path. 404 if the recording exists
+but is attached to a different call.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `callRecordings.fetch`
+}

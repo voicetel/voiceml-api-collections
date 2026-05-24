@@ -1,0 +1,39 @@
+meta {
+  name: Calls · Create media stream
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Url": "",
+  "StatusCallbackMethod": "POST"
+}
+}
+
+docs {
+**Start a media stream on the call (REST equivalent of `<Connect><Stream>`/`<Start><Stream>`)**
+Issues `uuid_audio_fork start` on the call leg via the same
+executor primitive the TwiML verbs use. Returns the new Stream
+resource with an MZ-prefixed sid.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `streams.create`
+}

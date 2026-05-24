@@ -1,0 +1,34 @@
+meta {
+  name: IncomingPhoneNumbers incomingPhoneNumbers.listTollFree
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/TollFree.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~PhoneNumber: 
+  ~FriendlyName: 
+  ~Beta: 
+  ~Origin: 
+}
+
+docs {
+**List toll-free DIDs assigned to the authenticated tenant**
+Twilio type-specific list alias. Returns US toll-free NPAs
+(800/833/844/855/866/877/888). Same pagination envelope as
+`/IncomingPhoneNumbers`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `incomingPhoneNumbers.listTollFree`
+}

@@ -1,0 +1,39 @@
+meta {
+  name: Calls · Send user-defined message
+  type: http
+  seq: 23
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/UserDefinedMessages.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Send a user-defined message on a live call (NOT IMPLEMENTED)**
+Twilio's chat-style messages on a live call. Real
+message-passing infrastructure (a websocket on the
+customer-facing leg) that's out of scope for callBroadcast.
+Returns 501 with Twilio code 20501. The empty request body
+schema is declared so codegen tooling emits a method
+signature consistent with Twilio's SDK.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `userDefinedMessages.create`
+}
