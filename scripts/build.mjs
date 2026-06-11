@@ -104,6 +104,13 @@ const FRIENDLY_NAMES = {
   'incomingPhoneNumbers.fetch': 'Incoming Phone Numbers · Fetch',
   'incomingPhoneNumbers.update': 'Incoming Phone Numbers · Update',
   'incomingPhoneNumbers.delete': 'Incoming Phone Numbers · Delete',
+  'messages.create': 'Messages · Create',
+  'messages.list': 'Messages · List',
+  'messages.fetch': 'Messages · Fetch',
+  'messages.update': 'Messages · Update (redact / cancel)',
+  'messages.delete': 'Messages · Delete',
+  'payments.create': 'Calls · Start <Pay> session',
+  'payments.update': 'Calls · Update <Pay> session',
   'health.check': 'Diagnostics · Health check',
   'openapi.yaml': 'Diagnostics · OpenAPI spec (YAML)',
   'openapi.yml': 'Diagnostics · OpenAPI spec (YML alias)',
@@ -118,9 +125,11 @@ const TAG_TO_FOLDER = {
   Api20100401CallTranscription: 'Calls',
   Api20100401Stream: 'Calls',
   Api20100401Siprec: 'Calls',
+  Api20100401Payments: 'Calls',
   Api20100401Conference: 'Conferences',
   Api20100401ConferenceRecording: 'Conferences',
   Api20100401Participant: 'Conferences',
+  Api20100401Message: 'Messages',
   Api20100401Queue: 'Queues',
   Api20100401Member: 'Queues',
   Api20100401Application: 'Applications',
@@ -132,6 +141,7 @@ const TAG_TO_FOLDER = {
 const FOLDER_ORDER = [
   'Calls',
   'Conferences',
+  'Messages',
   'Queues',
   'Applications',
   'Recordings',
@@ -141,9 +151,11 @@ const FOLDER_ORDER = [
 
 const FOLDER_DESCRIPTIONS = {
   Calls:
-    'Call resources and subresources — originate, update, terminate, recordings, streams, SIPREC, transcriptions, events, and notifications.',
+    'Call resources and subresources — originate, update, terminate, recordings, streams, SIPREC, transcriptions, events, notifications, and <Pay> sessions.',
   Conferences:
     'Conference resources — list, fetch, update, manage participants, and list conference-scoped recordings.',
+  Messages:
+    'SMS Messages — send, list, fetch, redact / cancel, and delete. Twilio-compatible /Messages REST surface.',
   Queues:
     'Queue resources and members — create, list, fetch, update, delete queues; peek, fetch, and dequeue members.',
   Applications:
@@ -201,19 +213,64 @@ function exampleFromSchema(schema, depth = 0) {
   return null;
 }
 
-function requestBodyExample(operation) {
+// Explicit body templates for ops whose schema defaults don't surface every
+// documented field. Keyed by operationId; merged on top of the schema-derived
+// example so SDK users see the full Twilio-compatible field set.
+const BODY_TEMPLATE_OVERRIDES = {
+  'messages.create': {
+    To: '',
+    From: '',
+    Body: '',
+    MessagingServiceSid: '',
+    StatusCallback: '',
+  },
+  'messages.update': {
+    Body: '',
+    Status: 'canceled',
+  },
+  'payments.create': {
+    IdempotencyKey: '',
+    StatusCallback: '',
+    BankAccountType: '',
+    ChargeAmount: '',
+    Currency: 'USD',
+    Description: '',
+    Input: 'dtmf',
+    MinPostalCodeLength: 0,
+    Parameter: '',
+    PaymentConnector: 'Default',
+    PaymentMethod: '',
+    PostalCode: true,
+    SecurityCode: true,
+    Timeout: 5,
+    TokenType: 'one-time',
+    ValidCardTypes: '',
+    RequireMatchingInputs: '',
+    Confirmation: false,
+  },
+  'payments.update': {
+    IdempotencyKey: '',
+    StatusCallback: '',
+    Capture: '',
+    Status: '',
+  },
+};
+
+function requestBodyExample(operation, opId) {
   const rb = operation.requestBody;
-  if (!rb?.content) return null;
+  if (!rb?.content) return BODY_TEMPLATE_OVERRIDES[opId] || null;
   const content =
     rb.content['application/json'] ||
     rb.content['application/x-www-form-urlencoded'] ||
     Object.values(rb.content)[0];
-  if (!content) return null;
+  if (!content) return BODY_TEMPLATE_OVERRIDES[opId] || null;
   if (content.example !== undefined) return content.example;
   if (content.examples) {
     const first = Object.values(content.examples)[0];
     if (first?.value !== undefined) return first.value;
   }
+  const override = BODY_TEMPLATE_OVERRIDES[opId];
+  if (override) return override;
   return exampleFromSchema(content.schema);
 }
 
@@ -281,8 +338,15 @@ function descriptionFor(op, method, path, opId) {
   return lines.join('\n');
 }
 
+function resolveParam(p) {
+  if (!p?.$ref) return p;
+  const refName = p.$ref.replace('#/components/parameters/', '');
+  return spec.components?.parameters?.[refName] || p;
+}
+
 function postmanQueryFor(op) {
   return (op.parameters || [])
+    .map(resolveParam)
     .filter((p) => p.in === 'query')
     .map((p) => ({
       key: p.name,
@@ -300,7 +364,8 @@ function postmanQueryFor(op) {
 function postmanHeadersFor(op, hasBody) {
   const out = [];
   if (hasBody) out.push({ key: 'Content-Type', value: 'application/json' });
-  for (const p of op.parameters || []) {
+  for (const raw of op.parameters || []) {
+    const p = resolveParam(raw);
     if (p.in === 'header') {
       out.push({
         key: p.name,
@@ -364,7 +429,7 @@ for (const name of FOLDER_ORDER) {
 for (const { folder, opId, method, path, op } of operations) {
   const folderItem = folders.get(folder);
 
-  const bodyExample = ['POST', 'PUT', 'PATCH'].includes(method) ? requestBodyExample(op) : null;
+  const bodyExample = ['POST', 'PUT', 'PATCH'].includes(method) ? requestBodyExample(op, opId) : null;
   const hasBody = bodyExample !== null && bodyExample !== undefined;
   const headers = postmanHeadersFor(op, hasBody);
   const query = postmanQueryFor(op);
@@ -405,7 +470,7 @@ const collection = {
       '',
       `Version: **${spec.info.version}** · Spec: OpenAPI 3.1 · Host: \`https://voiceml.voicetel.com\``,
       '',
-      'Twilio-compatible REST surface for outbound voice and AMD. Every endpoint is grouped by resource family.',
+      'Twilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.',
       '',
       '## Auth model',
       '',
@@ -554,7 +619,7 @@ for (const { folder, opId, method, path, op } of operations) {
   const fileSlug = slugify(opId);
   const filePath = resolve(brunoRoot, folder, `${String(seq).padStart(2, '0')}-${fileSlug}.bru`);
 
-  const bodyExample = ['POST', 'PUT', 'PATCH'].includes(method) ? requestBodyExample(op) : null;
+  const bodyExample = ['POST', 'PUT', 'PATCH'].includes(method) ? requestBodyExample(op, opId) : null;
   const hasBody = bodyExample !== null && bodyExample !== undefined;
   const headers = postmanHeadersFor(op, hasBody);
   const query = postmanQueryFor(op);

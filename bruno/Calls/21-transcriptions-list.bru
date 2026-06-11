@@ -1,7 +1,7 @@
 meta {
   name: Calls · List transcriptions
   type: http
-  seq: 19
+  seq: 21
 }
 
 get {
@@ -17,8 +17,8 @@ params:path {
 
 docs {
 **List active transcriptions for the call**
-Returns 0 or 1 entries. Pagination envelope is the canonical
-Twilio shape.
+Returns 0 or 1 entries. Pagination envelope is the Twilio-compatible
+shape.
 
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.

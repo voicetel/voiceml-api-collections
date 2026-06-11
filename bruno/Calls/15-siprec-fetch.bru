@@ -1,11 +1,11 @@
 meta {
-  name: Calls · Fetch transcription
+  name: Calls · Fetch SIPREC session
   type: http
-  seq: 21
+  seq: 15
 }
 
 get {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions/:Sid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Siprec/:Sid.json
   body: none
   auth: inherit
 }
@@ -17,9 +17,9 @@ params:path {
 }
 
 docs {
-**Fetch a single transcription by sid**
+**Fetch a single SIPREC session by sid**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `transcriptions.fetch`
+OperationId: `siprec.fetch`
 }

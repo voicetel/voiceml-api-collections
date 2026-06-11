@@ -1,8 +1,8 @@
 # VoiceML API Collections
 
-Official **Postman** and **Bruno** collections for the [VoiceML REST API](https://voicetel.com/docs/api/v0.6/voiceml/) — Twilio-compatible outbound voice and AMD, every endpoint pre-wired with HTTP Basic Auth.
+Official **Postman** and **Bruno** collections for the [VoiceML REST API](https://voicetel.com/docs/api/v0.6/voiceml/) — Twilio-compatible voice, SMS, and AMD, every endpoint pre-wired with HTTP Basic Auth.
 
-![Version](https://img.shields.io/badge/version-0.6.4-blue) *(v0.6.6 spec sync in progress locally)*
+![Version](https://img.shields.io/badge/version-0.7.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Postman](https://img.shields.io/badge/Postman-Collection_v2.1-orange)
 ![Bruno](https://img.shields.io/badge/Bruno-supported-purple)
@@ -24,7 +24,7 @@ Official **Postman** and **Bruno** collections for the [VoiceML REST API](https:
 |------------------|---------|
 | `voiceml-api.postman_collection.json` | Single-file Postman Collection v2.1 (drag-and-drop import). |
 | `voiceml-api.postman_environment.json` | Companion Postman environment with `baseUrl`, `accountSid`, `apiKey`. |
-| `bruno/` | One `.bru` file per request, organized into 7 resource folders. Git-friendly plain text. |
+| `bruno/` | One `.bru` file per request, organized into 8 resource folders. Git-friendly plain text. |
 | `bruno/bruno.json` | Bruno project file. |
 | `bruno/environments/production.bru` | Production environment (`https://voiceml.voicetel.com`). |
 | `spec/callbroadcast.yml` | Pinned copy of the OpenAPI 3.1 source spec, for reproducible builds. |
@@ -32,16 +32,17 @@ Official **Postman** and **Bruno** collections for the [VoiceML REST API](https:
 | `scripts/build.mjs` | Regenerates both collections from the spec. |
 | `scripts/validate.mjs` | Asserts every `operationId` in the spec is represented in both collections. |
 
-All **61 operations** across **7 resource families** are covered:
+All **81 operations** across **8 resource families** are covered:
 
 | Family | Endpoints | Highlights |
 |--------|-----------|------------|
-| **Calls** | 25 | Originate, update, terminate, recordings, streams, SIPREC, transcriptions, events. |
-| **Conferences** | 8 | List, fetch, update, participants, conference recordings. |
+| **Calls** | 30 | Originate, update, terminate, recordings, streams, SIPREC, transcriptions, events, notifications, `<Pay>` sessions. |
+| **Conferences** | 12 | List, fetch, update, participants, conference recordings. |
+| **Messages** | 5 | Send SMS, list, fetch, redact / cancel, delete. |
 | **Queues** | 10 | Queue CRUD, peek/dequeue members. |
 | **Applications** | 5 | TwiML Application CRUD. |
 | **Recordings** | 4 | Account-scoped catalog, WAV download. |
-| **IncomingPhoneNumbers** | 5 | Tenant self-serve DID management. |
+| **IncomingPhoneNumbers** | 11 | Tenant self-serve DID management (Local / Mobile / TollFree variants). |
 | **Diagnostics** | 4 | Health probe, OpenAPI self-publish (no auth). |
 
 ## Importing to Postman

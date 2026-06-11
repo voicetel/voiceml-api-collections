@@ -1,11 +1,11 @@
 meta {
-  name: Calls · Delete record
+  name: Messages · Delete
   type: http
-  seq: 26
+  seq: 5
 }
 
 delete {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json
   body: none
   auth: inherit
 }
@@ -16,11 +16,11 @@ params:path {
 }
 
 docs {
-**Delete a call record**
+**Delete a Message**
 
 Returns **204 No Content** on success — no response body.
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `calls.delete`
+OperationId: `messages.delete`
 }

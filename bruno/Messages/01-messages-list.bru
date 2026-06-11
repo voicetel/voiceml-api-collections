@@ -1,11 +1,11 @@
 meta {
-  name: Queues · List
+  name: Messages · List
   type: http
   seq: 1
 }
 
 get {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages.json
   body: none
   auth: inherit
 }
@@ -15,15 +15,20 @@ params:path {
 }
 
 query {
+  ~To: 
+  ~From: 
+  ~DateSent: 
+  ~DateSent<: 
+  ~DateSent>: 
   ~Page: 
   ~PageSize: 
   ~PageToken: 
 }
 
 docs {
-**List queues for the account (paged, FriendlyName ASC)**
+**List Messages for the account (paged, DateCreated DESC)**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `queues.list`
+OperationId: `messages.list`
 }

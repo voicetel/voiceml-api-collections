@@ -1,7 +1,7 @@
 meta {
   name: Calls · Start SIPREC session
   type: http
-  seq: 12
+  seq: 14
 }
 
 post {
@@ -27,8 +27,8 @@ body:json {
 
 docs {
 **Start a SIPREC session on the call (REST equivalent of `<Start><Siprec>`)**
-Invokes the `siprec` dialplan app via `uuid_broadcast` against
-the configured connector profile. Returns the new Siprec
+Starts a SIPREC mirror against the configured connector
+profile on the live call leg. Returns the new Siprec
 resource with an SR-prefixed sid.
 
 

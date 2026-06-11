@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: VoiceML — Twilio-compatible REST API
-  version: "0.6.6"
+  version: "0.7.0"
   summary: Outbound voice + AMD service with a Twilio-compatible REST API
   description: |
     VoiceML exposes a Twilio-compatible Programmable Voice Calls REST API so
@@ -99,6 +99,13 @@ tags:
     description: |
       The Application resource — create/list/fetch/update/delete.
       Twilio-parity tag.
+  - name: Api20100401Message
+    x-displayName: Messages
+    description: |
+      The Message resource — create/list/fetch/update/delete. VoiceML's
+      SMS surface translates Twilio-shape requests to the configured
+      SMS provider. Outbound-only today; inbound and MMS land in a
+      follow-up release. Twilio-parity tag.
   - name: Api20100401Recording
     x-displayName: Recordings
     description: |
@@ -119,6 +126,14 @@ tags:
     description: |
       Tenant self-serve IncomingPhoneNumbers — list/create/fetch/
       update/delete. Twilio-parity tag.
+  - name: Api20100401Payments
+    x-displayName: Calls / Payments
+    description: |
+      <Pay> REST companion under `/Calls/{Sid}/Payments` — start /
+      modify a PCI Pay session against an existing call leg without
+      round-tripping TwiML. Gated by per-tenant
+      `pay_enabled` + `stripe_secret_key`.
+      Twilio-parity tag.
   - name: Diagnostic
     x-displayName: Diagnostics
     description: |
@@ -331,7 +346,7 @@ components:
       type: object
       required: [sid, account_sid, status, direction, api_version, uri, date_created, date_updated]
       properties:
-        sid:                  { type: string, example: "CAffffffffffffffffffffffffffffffff" }
+        sid:                  { type: string, example: "CA1234567890abcdef1234567890abcdef" }
         account_sid:          { type: string, example: "ACffffffffffffffffffffffffffffffff" }
         api_version:          { type: string, example: "2010-04-01" }
         to:                   { type: string, example: "+18005551234" }
@@ -350,19 +365,14 @@ components:
         answered_by:
           type: string
           description: |
-            AMD verdict. Wire-strict Twilio enum — callBroadcast's
-            internal extended verdicts (`screened`, `screened_ivr`,
-            `disconnected`) are remapped at the response boundary
-            so strict-mode SDK deserialisers (twilio-csharp
-            StringEnumConverter, twilio-java Jackson EnumDeserializer)
-            don't throw. The original verdict survives in metric
-            labels — see docs/detectors.md.
+            AMD verdict. Wire-strict Twilio enum, suitable for
+            strict-mode SDK deserialisers.
           enum: [human, machine_start, machine_end_beep, machine_end_silence,
                  machine_end_other, fax, unknown, ""]
         start_time:           { type: string, format: date-time-rfc-2822 }
         end_time:             { type: string, format: date-time-rfc-2822 }
         duration:             { type: string, description: "Seconds, as decimal string." }
-        price:                { type: string, description: "Twilio compatibility — always empty (callBroadcast does not bill per-call)." }
+        price:                { type: string, description: "Twilio compatibility — always empty (VoiceML does not bill per-call)." }
         price_unit:           { type: string, description: "Twilio compatibility — always empty." }
         phone_number_sid:     { type: string, description: "Twilio compatibility — always empty." }
         annotation:           { type: string, description: "Twilio compatibility — always empty." }
@@ -394,7 +404,7 @@ components:
       type: object
       required: [sid, account_sid, friendly_name, status, api_version, uri]
       properties:
-        sid:           { type: string, pattern: '^CF[a-f0-9]{32}$', example: "CFffffffffffffffffffffffffffffffff" }
+        sid:           { type: string, pattern: '^CF[a-f0-9]{32}$', example: "CF1234567890abcdef1234567890abcdef" }
         account_sid:   { type: string }
         friendly_name: { type: string, example: "incident-42" }
         status:
@@ -410,11 +420,11 @@ components:
           description: |
             Twilio edge region label. Defaults to `us1`; reserved
             for operator-overridable region taxonomy in a future
-            release. Informational — callBroadcast does not route
+            release. Informational — VoiceML does not route
             by region today.
         api_version:   { type: string }
         uri:           { type: string }
-        date_created:  { type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked (callBroadcast queries mod_conference live and does not persist room creation timestamps)." }
+        date_created:  { type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked (room state is queried live; creation timestamps are not persisted)." }
         date_updated:  { type: string, format: date-time-rfc-2822, description: "Same caveat as `date_created`." }
         reason_conference_ended:
           type: string
@@ -432,7 +442,7 @@ components:
           description: "Map of `participants` and `recordings` URIs — Twilio-compatible."
         member_count:
           type: integer
-          description: callBroadcast extension — count of current participants.
+          description: VoiceML extension — count of current participants.
 
     ConferenceList:
       type: object
@@ -452,7 +462,7 @@ components:
       type: object
       required: [call_sid, conference_sid, account_sid, muted, hold, coaching, queue_time, status, start_conference_on_enter, end_conference_on_exit, api_version, uri]
       properties:
-        call_sid:        { type: string, example: "CAffffffffffffffffffffffffffffffff" }
+        call_sid:        { type: string, example: "CA0123456789abcdef0123456789abcdef" }
         conference_sid:  { type: string }
         account_sid:     { type: string }
         muted:           { type: boolean }
@@ -463,16 +473,13 @@ components:
             When `coaching` is true, the CallSid of the participant this
             coach can speak to (Twilio whisper-coach). Empty when
             `coaching` is false or the coach target has not joined.
-            See #267.
         coaching:
           type: boolean
           description: |
             True when this participant joined with the `coach` role
             (Twilio whisper-coach pattern). A coach hears the entire
             conference but is only audible to the participant
-            identified by `call_sid_to_coach`. Derived from
-            mod_conference's `coach` flag in `conference <name> list`.
-            See #266.
+            identified by `call_sid_to_coach`.
         queue_time:
           type: string
           description: |
@@ -480,7 +487,6 @@ components:
             Twilio's wire shape. "0" when the participant did not
             transit a queue (the common case). Populated from
             `<Enqueue>` dequeue events via the TwiML executor.
-            See #268.
         start_conference_on_enter:
           type: boolean
           description: "Reflects the `<Dial><Conference>` attribute used at join time. v0.19.x emits the documented default (`true`) for every participant — per-participant attribute persistence is on the roadmap."
@@ -491,7 +497,7 @@ components:
           type: string
           enum: [queued, connecting, ringing, connected, on-hold, complete, failed, completed]
           description: |
-            Derived from live mod_conference state: `connected`
+            Derived from live conference state: `connected`
             while the participant is in the room, `on-hold` while
             the `hold` flag is set, `completed` after they've
             left (visible only briefly via the synthesised
@@ -519,7 +525,7 @@ components:
       type: object
       required: [sid, account_sid, friendly_name, current_size, max_size, average_wait_time, date_created, date_updated, uri]
       properties:
-        sid:               { type: string, pattern: '^QU[0-9a-f]{32}$', example: "QUffffffffffffffffffffffffffffffff" }
+        sid:               { type: string, pattern: '^QU[0-9a-f]{32}$', example: "QU0123456789abcdef0123456789abcdef" }
         account_sid:       { type: string }
         friendly_name:     { type: string, example: "support" }
         current_size:      { type: integer, description: Live count of waiting members. }
@@ -551,7 +557,7 @@ components:
       type: object
       required: [call_sid, queue_sid, account_sid, date_enqueued, wait_time, position, uri]
       properties:
-        call_sid:      { type: string, example: "CAffffffffffffffffffffffffffffffff" }
+        call_sid:      { type: string, example: "CA0123456789abcdef0123456789abcdef" }
         queue_sid:     { type: string }
         account_sid:   { type: string }
         date_enqueued: { type: string, format: date-time-rfc-2822 }
@@ -579,7 +585,7 @@ components:
       type: object
       required: [sid, account_sid, friendly_name, api_version, voice_url, voice_caller_id_lookup, date_created, date_updated, uri]
       properties:
-        sid:                     { type: string, pattern: '^AP[0-9a-f]{32}$', example: "APffffffffffffffffffffffffffffffff" }
+        sid:                     { type: string, pattern: '^AP[0-9a-f]{32}$', example: "AP0123456789abcdef0123456789abcdef" }
         account_sid:             { type: string }
         friendly_name:           { type: string, example: "ivr-main" }
         api_version:             { type: string }
@@ -611,11 +617,56 @@ components:
         previous_page_uri: { type: [string, "null"] }
         uri:               { type: string }
 
+    Message:
+      type: object
+      required: [sid, account_sid, api_version, to, from, body, status, num_segments, num_media, direction, date_created, date_updated, uri]
+      properties:
+        sid:                     { type: string, pattern: '^SM[0-9a-f]{32}$', example: "SM0123456789abcdef0123456789abcdef" }
+        account_sid:             { type: string }
+        api_version:             { type: string }
+        to:                      { type: string, description: "Destination phone number in E.164 form." }
+        from:                    { type: string, description: "Source phone number; falls back to the tenant's configured default sender if omitted." }
+        body:                    { type: string, description: "Message text. Empty string after a redaction update." }
+        status:                  { type: string, enum: [queued, sending, sent, failed, delivered, undelivered, receiving, received, accepted, scheduled, read, canceled] }
+        num_segments:            { type: string, description: "Per-message segment count as Twilio surfaces it — string-typed wire format." }
+        num_media:               { type: string, description: "Always '0' today (no MMS support yet)." }
+        direction:               { type: string, enum: [outbound-api, outbound-call, outbound-reply, inbound] }
+        price:                   { type: [string, "null"] }
+        price_unit:              { type: [string, "null"] }
+        error_code:              { type: [integer, "null"], description: "Twilio-shape error taxonomy. 21609 = gateway not configured; 30001 = upstream gateway failure." }
+        error_message:           { type: [string, "null"], description: "Sanitised — never contains upstream URL or credentials." }
+        messaging_service_sid:   { type: [string, "null"] }
+        date_created:            { type: string, format: date-time-rfc-2822 }
+        date_updated:            { type: string, format: date-time-rfc-2822 }
+        date_sent:               { type: [string, "null"], format: date-time-rfc-2822 }
+        uri:                     { type: string }
+        subresource_uris:
+          type: object
+          properties:
+            media:    { type: string }
+            feedback: { type: string }
+
+    MessageList:
+      type: object
+      required: [messages, page, page_size, total]
+      properties:
+        messages:          { type: array, items: { $ref: '#/components/schemas/Message' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
     Recording:
       type: object
       required: [sid, account_sid, call_sid, status]
       properties:
-        sid:           { type: string, example: "RE00000000000000000000000000000000" }
+        sid:           { type: string, example: "RE1234567890abcdef1234567890abcdef" }
         account_sid:   { type: string }
         call_sid:      { type: string }
         conference_sid:
@@ -639,8 +690,8 @@ components:
         date_created:  { type: string, format: date-time-rfc-2822 }
         date_updated:  { type: string, format: date-time-rfc-2822 }
         start_time:    { type: string, format: date-time-rfc-2822 }
-        price:         { type: string, description: "Reserved; callBroadcast emits empty." }
-        price_unit:    { type: string, description: "Reserved; callBroadcast emits empty." }
+        price:         { type: string, description: "Reserved; VoiceML emits empty." }
+        price_unit:    { type: string, description: "Reserved; VoiceML emits empty." }
         encryption_details:
           type: object
           additionalProperties: true
@@ -663,10 +714,9 @@ components:
           description: |
             Twilio-compatible per-call error code for failed
             recordings. `null` (the common case) means no error;
-            non-zero values reference twilio.com/docs/api/errors. See
-            #269. The wire shape uses `null`, never `0` — strict-mode
-            SDK deserialisers (twilio-csharp / twilio-java) expect
-            null on the no-error path.
+            non-zero values reference twilio.com/docs/api/errors.
+            The wire shape uses `null`, never `0` — strict-mode SDK
+            deserialisers expect null on the no-error path.
 
     RecordingList:
       type: object
@@ -700,14 +750,13 @@ components:
         fields.
 
         The full Twilio field set is documented here so strict-binding
-        SDKs (twilio-csharp StringEnumConverter, twilio-java Jackson)
-        deserialize without throwing. Fields VoiceML doesn't track
+        SDKs deserialize without throwing. Fields VoiceML doesn't track
         (regulatory, SMS, emergency, trunking) emit a Twilio-compat
         default — empty string, `null`, or the documented enum default.
         Customer code that reads e.g. `number.capabilities.voice`
         therefore works with the same SDK patterns on VoiceML and Twilio.
       properties:
-        sid:                       { type: string, pattern: '^PN[a-f0-9]{32}$', example: "PNffffffffffffffffffffffffffffffff" }
+        sid:                       { type: string, pattern: '^PN[a-f0-9]{32}$', example: "PN0123456789abcdef0123456789abcdef" }
         account_sid:               { type: string, pattern: '^AC[0-9a-f]{32}$' }
         phone_number:              { type: string, description: "E.164 — leading `+`, 7-15 digits.", example: "+18005551234" }
         friendly_name:             { type: string, description: "Display name. Empty by default in v0.5.x; tenant-editable via POST in a future release." }
@@ -771,7 +820,7 @@ components:
       type: object
       required: [sid, account_sid, call_sid, status, api_version, uri]
       properties:
-        sid:          { type: string, pattern: '^MZ[a-f0-9]{32}$', example: "MZffffffffffffffffffffffffffffffff" }
+        sid:          { type: string, pattern: '^MZ[a-f0-9]{32}$', example: "MZ1234567890abcdef1234567890abcdef" }
         account_sid:  { type: string }
         call_sid:     { type: string }
         name:         { type: string, description: "Operator-supplied label for the stream; round-trips on the resource." }
@@ -786,17 +835,37 @@ components:
       type: object
       required: [sid, account_sid, call_sid, status, api_version, uri]
       properties:
-        sid:            { type: string, pattern: '^SR[a-f0-9]{32}$', example: "SRffffffffffffffffffffffffffffffff" }
+        sid:            { type: string, pattern: '^SR[a-f0-9]{32}$', example: "SR1234567890abcdef1234567890abcdef" }
         account_sid:    { type: string }
         call_sid:       { type: string }
         name:           { type: string }
-        connector_name: { type: string, description: "mod_siprec profile (`SIPREC_DEFAULT_PROFILE` env when empty)." }
+        connector_name: { type: string, description: "SIPREC profile name. Falls back to the configured default when empty." }
         status:
           type: string
           enum: [in-progress, stopped]
         date_created:   { type: string }
         date_updated:   { type: string }
         uri:            { type: string }
+
+    CallPayment:
+      type: object
+      required: [sid, account_sid, call_sid, api_version, uri, date_created, date_updated]
+      description: |
+        <Pay> REST companion resource. Twilio's response shape
+        is intentionally minimal — runtime config (chargeAmount,
+        paymentConnector, validCardTypes, etc.) is captured server-side
+        but not echoed back. VoiceML tracks the status enum locally
+        so SDKs can introspect lifecycle progression; the field is
+        surfaced as a VoiceML extension on top of Twilio's response
+        schema.
+      properties:
+        sid:          { type: string, pattern: '^PY[a-f0-9]{32}$', example: "PY1234567890abcdef1234567890abcdef" }
+        account_sid:  { type: string }
+        call_sid:     { type: string }
+        api_version:  { type: string, example: "2010-04-01" }
+        date_created: { type: string }
+        date_updated: { type: string }
+        uri:          { type: string }
 
     CallTranscription:
       type: object
@@ -807,7 +876,7 @@ components:
         transcription resource — events are streamed via the
         StatusCallback URL while the call is live.
       properties:
-        sid:                  { type: string, pattern: '^RT[a-f0-9]{32}$', example: "RTffffffffffffffffffffffffffffffff" }
+        sid:                  { type: string, pattern: '^RT[a-f0-9]{32}$', example: "RT1234567890abcdef1234567890abcdef" }
         account_sid:          { type: string }
         call_sid:             { type: string }
         name:                 { type: string }
@@ -921,7 +990,7 @@ components:
           type: integer
           minimum: 1
           default: 60
-          description: "Originate timeout (seconds). Drives the FreeSWITCH `originate_timeout` channel variable."
+          description: "Originate timeout (seconds)."
         SendDigits:
           type: string
           description: "DTMF burst played after answer — charset `0-9*#wW` (`w`=500ms, `W`=1s pause). Wired into the originate."
@@ -939,10 +1008,10 @@ components:
           description: "SIP digest auth password (paired with SipAuthUsername)."
         Byoc:
           type: string
-          description: "Twilio BYOC Trunk SID. Accepted-and-ignored — callBroadcast routes via FreeSWITCH gateways configured at deploy time."
+          description: "Twilio BYOC Trunk SID. Accepted-and-ignored — VoiceML routes via gateways configured at deploy time."
         AsyncAmd:
           type: boolean
-          description: "Twilio compatibility — AMD on callBroadcast is always async; this flag is accepted but redundant."
+          description: "Twilio compatibility — AMD on VoiceML is always async; this flag is accepted but redundant."
         CallToken:
           type: string
           description: "Twilio CallToken for verified-caller-id flows. Accepted-and-ignored."
@@ -1066,7 +1135,7 @@ paths:
       tags: [Api20100401Call]
       summary: Create (originate) a call
       description: |
-        Originates an outbound call via FreeSWITCH. The `To` and `From`
+        Originates an outbound call. The `To` and `From`
         numbers are validated and normalised to E.164 against the
         authenticated tenant's `phone_regions` list — set per-account in
         the admin API. Empty list disables validation; multi-region
@@ -1089,7 +1158,7 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '502':
-          description: Originate failed (carrier unreachable, FreeSWITCH error, ...).
+          description: Originate failed (carrier unreachable, internal error, ...).
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
@@ -1162,16 +1231,15 @@ paths:
       tags: [Api20100401Conference]
       summary: List active conferences for the account
       description: |
-        Returns conferences currently active in mod_conference for
-        this tenant. Live query — no caching, always reflects the
-        FreeSWITCH state of the moment. Conferences appear once a
-        first participant joins (typically via TwiML
-        `<Dial><Conference>`) and disappear as soon as the last
-        participant leaves.
+        Returns conferences currently active for this tenant. Live
+        query — no caching, always reflects state at request time.
+        Conferences appear once a first participant joins (typically
+        via TwiML `<Dial><Conference>`) and disappear as soon as the
+        last participant leaves.
       parameters:
         - { name: FriendlyName, in: query, schema: { type: string }, description: "Filter to conferences with this exact FriendlyName." }
         - { name: Status, in: query, schema: { type: string, enum: [init, in-progress, completed] }, description: "Filter to conferences in this lifecycle state." }
-        - { name: DateCreated, in: query, schema: { type: string, format: date-time }, description: "Twilio-compatible parameter. VoiceML's conference list is a live FreeSWITCH query with no historical store — accepted but does not narrow the result set." }
+        - { name: DateCreated, in: query, schema: { type: string, format: date-time }, description: "Twilio-compatible parameter. VoiceML's conference list is a live query with no historical store — accepted but does not narrow the result set." }
         - { name: "DateCreated<", in: query, schema: { type: string, format: date-time }, description: "Twilio-compatible date filter — accept-but-no-op on live conference list." }
         - { name: "DateCreated>", in: query, schema: { type: string, format: date-time }, description: "Twilio-compatible date filter — accept-but-no-op on live conference list." }
         - { name: DateUpdated, in: query, schema: { type: string, format: date-time }, description: "Twilio-compatible date filter — accept-but-no-op on live conference list." }
@@ -1699,6 +1767,117 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+  /2010-04-01/Accounts/{AccountSid}/Messages.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+    post:
+      operationId: messages.create
+      tags: [Api20100401Message]
+      summary: Send an SMS
+      description: |
+        Sends `Body` to `To` via the configured SMS provider. When
+        the provider is not configured the row is still persisted
+        with status=failed and error_code=21609 so the integrator can
+        introspect the rejection through GET /Messages/{Sid}.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [To, Body]
+              properties:
+                To:                  { type: string, description: "Destination phone number (E.164)." }
+                From:                { type: string, description: "Source phone number; falls back to the tenant's configured default sender." }
+                Body:                { type: string, description: "Message text." }
+                MessagingServiceSid: { type: string, description: "Accepted for parity; not yet routed against." }
+                StatusCallback:      { type: string, format: uri, description: "Reserved — outbound SMS is fire-and-forget today." }
+      responses:
+        '201':
+          description: Message resource (status=sent or status=failed).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Message' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '503':
+          description: SMS gateway not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: messages.list
+      tags: [Api20100401Message]
+      summary: List Messages for the account (paged, DateCreated DESC)
+      parameters:
+        - { name: To,        in: query, schema: { type: string } }
+        - { name: From,      in: query, schema: { type: string } }
+        - { name: DateSent,  in: query, schema: { type: string, format: date-time-rfc-2822 } }
+        - { name: 'DateSent<', in: query, schema: { type: string, format: date-time-rfc-2822 } }
+        - { name: 'DateSent>', in: query, schema: { type: string, format: date-time-rfc-2822 } }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of Messages.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /2010-04-01/Accounts/{AccountSid}/Messages/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/ResourceSid'
+    get:
+      operationId: messages.fetch
+      tags: [Api20100401Message]
+      summary: Fetch a Message
+      responses:
+        '200':
+          description: Message resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Message' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: messages.update
+      tags: [Api20100401Message]
+      summary: Update a Message (Body redaction; Status=canceled rejected)
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                Body:   { type: string, description: "Pass empty string to redact. Non-empty Body is ignored — Twilio's documented redaction semantics." }
+                Status: { type: string, enum: [canceled], description: "Returns 21610 — outbound SMS is fire-and-forget, no cancel path." }
+      responses:
+        '200':
+          description: Message resource (post-mutation state).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Message' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Cancellation not supported by the SMS provider.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    delete:
+      operationId: messages.delete
+      tags: [Api20100401Message]
+      summary: Delete a Message
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
   /2010-04-01/Accounts/{AccountSid}/Recordings.json:
     parameters:
       - $ref: '#/components/parameters/AccountSid'
@@ -1758,10 +1937,10 @@ paths:
       tags: [Api20100401CallRecording]
       summary: Start a recording mid-call
       description: |
-        Begins a fresh recording on the live call leg via FreeSWITCH's
-        `uuid_record`. The new Recording resource is returned in the
-        201 response. Distinct from `Record=true` on `POST /Calls`,
-        which captures from the start of the call.
+        Begins a fresh recording on the live call leg. The new
+        Recording resource is returned in the 201 response. Distinct
+        from `Record=true` on `POST /Calls`, which captures from the
+        start of the call.
       requestBody:
         required: false
         content:
@@ -1913,8 +2092,9 @@ paths:
       tags: [Api20100401Siprec]
       summary: List active SIPREC sessions for the call
       description: |
-        Returns 0 or 1 entries — mod_siprec supports one mirror per
-        call uuid. Pagination envelope is the Twilio-compatible shape.
+        Returns 0 or 1 entries — only one SIPREC mirror per call leg
+        is supported. Pagination envelope is the Twilio-compatible
+        shape.
       responses:
         '200':
           description: Page of SIPREC sessions (0 or 1 entry).
@@ -1939,8 +2119,8 @@ paths:
       tags: [Api20100401Siprec]
       summary: Start a SIPREC session on the call (REST equivalent of `<Start><Siprec>`)
       description: |
-        Invokes the `siprec` dialplan app via `uuid_broadcast` against
-        the configured connector profile. Returns the new Siprec
+        Starts a SIPREC mirror against the configured connector
+        profile on the live call leg. Returns the new Siprec
         resource with an SR-prefixed sid.
       requestBody:
         required: false
@@ -1950,7 +2130,7 @@ paths:
               type: object
               properties:
                 Name:                 { type: string }
-                ConnectorName:        { type: string, description: "mod_siprec profile name. Empty falls back to SIPREC_DEFAULT_PROFILE then `default`." }
+                ConnectorName:        { type: string, description: "SIPREC profile name. Empty falls back to the configured default profile." }
                 Track:                { type: string, enum: [inbound_track, outbound_track, both_tracks] }
                 StatusCallback:       { type: string }
                 StatusCallbackMethod: { type: string, default: "POST" }
@@ -1985,10 +2165,9 @@ paths:
       tags: [Api20100401Siprec]
       summary: Update a SIPREC session — clears tracking only
       description: |
-        StefanYohansson/mod_siprec doesn't expose a stop verb; the SRS
+        The SIPREC integration doesn't expose a stop verb; the SRS
         recording session continues until the call hangs up. This
-        endpoint clears callBroadcast's session-tracking entry only.
-        Documented mod_siprec limitation.
+        endpoint clears VoiceML's session-tracking entry only.
       requestBody:
         required: true
         content:
@@ -2106,6 +2285,99 @@ paths:
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
 
+  /2010-04-01/Accounts/{AccountSid}/Calls/{CallSid}/Payments.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/CallSid'
+    post:
+      operationId: payments.create
+      tags: [Api20100401Payments]
+      summary: Start a <Pay> session on an existing call (REST equivalent of `<Pay>` TwiML)
+      description: |
+        Initiates a PCI Pay session against the live call leg. Mirrors
+        the TwiML `<Pay>` verb's parser + state machine; every
+        attribute below is accepted and validated. The runtime
+        (Stripe charge / tokenize) is currently gated; until it is
+        wired, both surfaces accept and log without invoking the
+        Stripe connector.
+
+        Per-tenant BYO is binding: the tenant's account row must have
+        `pay_enabled = true` AND `stripe_secret_key` set (admin
+        opt-in). No server-level Stripe key fallback — multi-tenancy
+        demands no fallback.
+
+        `IdempotencyKey` is accepted and persisted on the row for
+        diagnostic visibility; replay dedup is NOT enforced today.
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                IdempotencyKey:        { type: string, description: "Body-level dedup token. Accepted; replay dedup not enforced." }
+                StatusCallback:        { type: string }
+                BankAccountType:       { type: string, enum: [consumer-checking, consumer-savings, commercial-checking] }
+                ChargeAmount:          { type: string, description: "Decimal under 1,000,000." }
+                Currency:              { type: string, default: "USD" }
+                Description:           { type: string }
+                Input:                 { type: string, enum: [dtmf] }
+                MinPostalCodeLength:   { type: integer, default: 0 }
+                Parameter:             { type: string, description: "Single-level JSON object passed to the payment connector." }
+                PaymentConnector:      { type: string, default: "Default" }
+                PaymentMethod:         { type: string, enum: [credit-card, ach-debit] }
+                PostalCode:            { type: boolean, default: true }
+                SecurityCode:          { type: boolean, default: true }
+                Timeout:               { type: integer, default: 5 }
+                TokenType:             { type: string, enum: [one-time, reusable, payment-method], default: "one-time" }
+                ValidCardTypes:        { type: string, description: "Space-separated. Default: visa mastercard amex maestro discover optima jcb diners-club enroute." }
+                RequireMatchingInputs: { type: string, description: "Comma-separated fields requiring matcher inputs." }
+                Confirmation:          { type: boolean }
+      responses:
+        '201':
+          description: Payment session created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CallPayment' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Account is not pay_enabled or has no stripe_secret_key.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/Calls/{CallSid}/Payments/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/CallSid'
+      - $ref: '#/components/parameters/SubresourceSid'
+    post:
+      operationId: payments.update
+      tags: [Api20100401Payments]
+      summary: Update a Pay session — Status=complete or Status=cancel
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                IdempotencyKey: { type: string }
+                StatusCallback: { type: string }
+                Capture:        { type: string, enum: [payment-card-number, expiration-date, security-code, postal-code, bank-routing-number, bank-account-number, payment-card-number-matcher, expiration-date-matcher, security-code-matcher, postal-code-matcher] }
+                Status:         { type: string, enum: [complete, cancel] }
+      responses:
+        '202':
+          description: Pay session update accepted; final settlement may still be pending.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CallPayment' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
   /2010-04-01/Accounts/{AccountSid}/Calls/{CallSid}/Notifications.json:
     parameters:
       - $ref: '#/components/parameters/AccountSid'
@@ -2115,9 +2387,9 @@ paths:
       tags: [Api20100401CallNotification]
       summary: List per-call notifications (compat stub)
       description: |
-        Twilio's per-call alert log. callBroadcast doesn't track
+        Twilio's per-call alert log. VoiceML doesn't track
         notifications as a separate stream — relevant operator-side
-        events flow through Prometheus + structured logs. This
+        events flow through metrics + structured logs. This
         endpoint is mounted as a stub so SDK helpers don't 404;
         the response is always an empty list. Page/PageSize and Log
         are accepted for SDK ergonomics but have no effect on an
@@ -2270,7 +2542,7 @@ paths:
       tags: [Api20100401Call]
       summary: List per-call lifecycle events (compat stub)
       description: |
-        Twilio's fine-grained per-call event stream. callBroadcast
+        Twilio's fine-grained per-call event stream. VoiceML
         delivers equivalent data via `StatusCallback` (initiated /
         ringing / answered / completed); this endpoint is mounted
         as a stub returning an empty list so SDK helpers iterate
@@ -2309,7 +2581,7 @@ paths:
       description: |
         Twilio's chat-style messages on a live call. Real
         message-passing infrastructure (a websocket on the
-        customer-facing leg) that's out of scope for callBroadcast.
+        customer-facing leg) that's out of scope for VoiceML.
         Returns 501 with Twilio code 20501. The empty request body
         schema is declared so codegen tooling emits a method
         signature consistent with Twilio's SDK.
@@ -2448,7 +2720,7 @@ paths:
       tags: [Api20100401CallRecording]
       summary: Update a mid-call recording's status
       description: |
-        Wires `uuid_record stop|pause|resume` on the live call leg.
+        Applies stop / pause / resume on the live recording.
         All three transitions return 200 + the post-mutation
         Recording resource. Tenant-scoped: a RecordingSid that
         belongs to a different account returns 404 without leaking
@@ -2603,12 +2875,12 @@ paths:
       tags: [Diagnostic]
       summary: Deep liveness probe
       description: |
-        Composite probe with two-tier severity. Hard checks (memdb,
-        disk free space, FreeSWITCH process + required modules +
-        Sofia profile RUNNING) flip the LB-facing `ok` boolean.
-        Soft checks (host CPU loadavg, memory pressure, FS workload
-        percents, Raft cluster) surface in `warnings` only — the LB
-        stays in rotation. Result cached 5 s on full success.
+        Composite probe with two-tier severity. Hard checks (storage,
+        disk free space, voice stack processes + required modules +
+        SIP profile state) flip the LB-facing `ok` boolean. Soft
+        checks (host CPU loadavg, memory pressure, workload percents,
+        cluster health) surface in `warnings` only — the LB stays in
+        rotation. Result cached 5 s on full success.
       security: []
       responses:
         '200':
@@ -2700,10 +2972,9 @@ paths:
             canonical lookup pattern is
             `GET /IncomingPhoneNumbers?PhoneNumber=+1...` followed by
             `GET /IncomingPhoneNumbers/{sid}` using the `sid` from the
-            list result. SDK clients (twilio-python's
-            `.list(phone_number=...)` etc.) issue this pattern; the
-            filter exists so it Just Works against callBroadcast.
-            Returns a 0-or-1-row envelope.
+            list result. Twilio-compatible SDK clients issue this
+            pattern; the filter is supported so the same call pattern
+            works against VoiceML. Returns a 0-or-1-row envelope.
           schema:
             type: string
             pattern: '^\+[1-9]\d{1,14}$'

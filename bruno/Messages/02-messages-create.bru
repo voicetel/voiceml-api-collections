@@ -1,0 +1,42 @@
+meta {
+  name: Messages · Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "To": "",
+  "From": "",
+  "Body": "",
+  "MessagingServiceSid": "",
+  "StatusCallback": ""
+}
+}
+
+docs {
+**Send an SMS**
+Sends `Body` to `To` via the configured SMS provider. When
+the provider is not configured the row is still persisted
+with status=failed and error_code=21609 so the integrator can
+introspect the rejection through GET /Messages/{Sid}.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `messages.create`
+}

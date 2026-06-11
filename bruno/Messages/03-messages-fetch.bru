@@ -1,11 +1,11 @@
 meta {
-  name: Calls · Fetch
+  name: Messages · Fetch
   type: http
-  seq: 24
+  seq: 3
 }
 
 get {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json
   body: none
   auth: inherit
 }
@@ -16,9 +16,9 @@ params:path {
 }
 
 docs {
-**Fetch a call**
+**Fetch a Message**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `calls.fetch`
+OperationId: `messages.fetch`
 }

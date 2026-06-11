@@ -1,0 +1,26 @@
+meta {
+  name: Calls · Delete record
+  type: http
+  seq: 28
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Delete a call record**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `calls.delete`
+}

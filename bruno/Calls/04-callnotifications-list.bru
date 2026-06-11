@@ -16,6 +16,9 @@ params:path {
 }
 
 query {
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
   ~Log: 
   ~MessageDate: 
   ~MessageDate<: 
@@ -24,9 +27,9 @@ query {
 
 docs {
 **List per-call notifications (compat stub)**
-Twilio's per-call alert log. callBroadcast doesn't track
+Twilio's per-call alert log. VoiceML doesn't track
 notifications as a separate stream — relevant operator-side
-events flow through Prometheus + structured logs. This
+events flow through metrics + structured logs. This
 endpoint is mounted as a stub so SDK helpers don't 404;
 the response is always an empty list. Page/PageSize and Log
 are accepted for SDK ergonomics but have no effect on an

@@ -1,0 +1,35 @@
+meta {
+  name: Messages · Update (redact / cancel)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Body": "",
+  "Status": "canceled"
+}
+}
+
+docs {
+**Update a Message (Body redaction; Status=canceled rejected)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `messages.update`
+}

@@ -23,16 +23,18 @@ query {
   ~DateUpdated: 
   ~DateUpdated<: 
   ~DateUpdated>: 
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
 }
 
 docs {
 **List active conferences for the account**
-Returns conferences currently active in mod_conference for
-this tenant. Live query — no caching, always reflects the
-FreeSWITCH state of the moment. Conferences appear once a
-first participant joins (typically via TwiML
-`<Dial><Conference>`) and disappear as soon as the last
-participant leaves.
+Returns conferences currently active for this tenant. Live
+query — no caching, always reflects state at request time.
+Conferences appear once a first participant joins (typically
+via TwiML `<Dial><Conference>`) and disappear as soon as the
+last participant leaves.
 
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.

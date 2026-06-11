@@ -1,0 +1,66 @@
+meta {
+  name: Calls · Start <Pay> session
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Payments.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "IdempotencyKey": "",
+  "StatusCallback": "",
+  "BankAccountType": "",
+  "ChargeAmount": "",
+  "Currency": "USD",
+  "Description": "",
+  "Input": "dtmf",
+  "MinPostalCodeLength": 0,
+  "Parameter": "",
+  "PaymentConnector": "Default",
+  "PaymentMethod": "",
+  "PostalCode": true,
+  "SecurityCode": true,
+  "Timeout": 5,
+  "TokenType": "one-time",
+  "ValidCardTypes": "",
+  "RequireMatchingInputs": "",
+  "Confirmation": false
+}
+}
+
+docs {
+**Start a <Pay> session on an existing call (REST equivalent of `<Pay>` TwiML)**
+Initiates a PCI Pay session against the live call leg. Mirrors
+the TwiML `<Pay>` verb's parser + state machine; every
+attribute below is accepted and validated. The runtime
+(Stripe charge / tokenize) is currently gated; until it is
+wired, both surfaces accept and log without invoking the
+Stripe connector.
+
+Per-tenant BYO is binding: the tenant's account row must have
+`pay_enabled = true` AND `stripe_secret_key` set (admin
+opt-in). No server-level Stripe key fallback — multi-tenancy
+demands no fallback.
+
+`IdempotencyKey` is accepted and persisted on the row for
+diagnostic visibility; replay dedup is NOT enforced today.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `payments.create`
+}

@@ -1,0 +1,38 @@
+meta {
+  name: Calls · Update <Pay> session
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Payments/:Sid.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  CallSid: <CallSid>
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "IdempotencyKey": "",
+  "StatusCallback": "",
+  "Capture": "",
+  "Status": ""
+}
+}
+
+docs {
+**Update a Pay session — Status=complete or Status=cancel**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `payments.update`
+}

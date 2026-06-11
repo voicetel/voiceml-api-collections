@@ -1,11 +1,11 @@
 meta {
-  name: Calls · Update media stream
+  name: Calls · Update transcription
   type: http
-  seq: 18
+  seq: 24
 }
 
 post {
-  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Streams/:Sid.json
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions/:Sid.json
   body: json
   auth: inherit
 }
@@ -27,9 +27,9 @@ body:json {
 }
 
 docs {
-**Update a media stream — only Status=stopped is meaningful**
+**Update a transcription — only Status=stopped is meaningful**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `streams.update`
+OperationId: `transcriptions.update`
 }

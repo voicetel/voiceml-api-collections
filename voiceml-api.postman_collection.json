@@ -1,15 +1,15 @@
 {
   "info": {
-    "_postman_id": "voiceml-api-v0-6-6",
-    "name": "VoiceML API (v0.6.6)",
-    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.6.6** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for outbound voice and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.6/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
+    "_postman_id": "voiceml-api-v0-7-0",
+    "name": "VoiceML API (v0.7.0)",
+    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.7.0** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.6/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "contact": {
       "name": "VoiceTel",
       "email": "support@voicetel.com",
       "url": "https://voicetel.com"
     },
-    "version": "0.6.6"
+    "version": "0.7.0"
   },
   "auth": {
     "type": "basic",
@@ -29,7 +29,7 @@
   "item": [
     {
       "name": "Calls",
-      "description": "Call resources and subresources — originate, update, terminate, recordings, streams, SIPREC, transcriptions, events, and notifications.",
+      "description": "Call resources and subresources — originate, update, terminate, recordings, streams, SIPREC, transcriptions, events, notifications, and <Pay> sessions.",
       "item": [
         {
           "name": "Calls · List",
@@ -37,7 +37,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls.json?To=&From=&Status=&ParentCallSid=&StartTime=&StartTime<=&StartTime>=&EndTime=&EndTime<=&EndTime>=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls.json?To=&From=&Status=&ParentCallSid=&StartTime=&StartTime<=&StartTime>=&EndTime=&EndTime<=&EndTime>=&Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -103,6 +103,24 @@
                   "value": "",
                   "description": "Calls ended strictly after this UTC date/time.",
                   "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
                 }
               ],
               "variable": [
@@ -146,7 +164,7 @@
                 }
               ]
             },
-            "description": "**Create (originate) a call**\nOriginates an outbound call via FreeSWITCH. The `To` and `From`\nnumbers are validated and normalised to E.164 against the\nauthenticated tenant's `phone_regions` list — set per-account in\nthe admin API. Empty list disables validation; multi-region\ntenants accept numbers valid in any listed region.\n`MachineDetection` is optional; omitting it skips AMD entirely.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.create`",
+            "description": "**Create (originate) a call**\nOriginates an outbound call. The `To` and `From`\nnumbers are validated and normalised to E.164 against the\nauthenticated tenant's `phone_regions` list — set per-account in\nthe admin API. Empty list disables validation; multi-region\ntenants accept numbers valid in any listed region.\n`MachineDetection` is optional; omitting it skips AMD entirely.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.create`",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"To\": \"\",\n  \"From\": \"\",\n  \"Method\": \"POST\",\n  \"FallbackMethod\": \"POST\",\n  \"StatusCallbackMethod\": \"POST\",\n  \"AsyncAmdStatusCallbackMethod\": \"POST\",\n  \"Record\": false,\n  \"RecordingStatusCallbackMethod\": \"POST\",\n  \"Timeout\": 60\n}",
@@ -165,7 +183,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Events.json",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Events.json?Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -176,6 +194,26 @@
                 "Calls",
                 ":CallSid",
                 "Events.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
               ],
               "variable": [
                 {
@@ -190,7 +228,7 @@
                 }
               ]
             },
-            "description": "**List per-call lifecycle events (compat stub)**\nTwilio's fine-grained per-call event stream. callBroadcast\ndelivers equivalent data via `StatusCallback` (initiated /\nringing / answered / completed); this endpoint is mounted\nas a stub returning an empty list so SDK helpers iterate\ncleanly. The canonical event source is the customer's\n`StatusCallback` URL. Page/PageSize are accepted for SDK\nergonomics but have no effect on an empty list.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callEvents.list`"
+            "description": "**List per-call lifecycle events (compat stub)**\nTwilio's fine-grained per-call event stream. VoiceML\ndelivers equivalent data via `StatusCallback` (initiated /\nringing / answered / completed); this endpoint is mounted\nas a stub returning an empty list so SDK helpers iterate\ncleanly. The canonical event source is the customer's\n`StatusCallback` URL. Page/PageSize are accepted for SDK\nergonomics but have no effect on an empty list.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callEvents.list`"
           },
           "response": []
         },
@@ -200,7 +238,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Notifications.json?Log=&MessageDate=&MessageDate<=&MessageDate>=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Notifications.json?Page=&PageSize=&PageToken=&Log=&MessageDate=&MessageDate<=&MessageDate>=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -213,6 +251,24 @@
                 "Notifications.json"
               ],
               "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                },
                 {
                   "key": "Log",
                   "value": "",
@@ -251,7 +307,7 @@
                 }
               ]
             },
-            "description": "**List per-call notifications (compat stub)**\nTwilio's per-call alert log. callBroadcast doesn't track\nnotifications as a separate stream — relevant operator-side\nevents flow through Prometheus + structured logs. This\nendpoint is mounted as a stub so SDK helpers don't 404;\nthe response is always an empty list. Page/PageSize and Log\nare accepted for SDK ergonomics but have no effect on an\nempty list.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callNotifications.list`"
+            "description": "**List per-call notifications (compat stub)**\nTwilio's per-call alert log. VoiceML doesn't track\nnotifications as a separate stream — relevant operator-side\nevents flow through metrics + structured logs. This\nendpoint is mounted as a stub so SDK helpers don't 404;\nthe response is always an empty list. Page/PageSize and Log\nare accepted for SDK ergonomics but have no effect on an\nempty list.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callNotifications.list`"
           },
           "response": []
         },
@@ -297,12 +353,116 @@
           "response": []
         },
         {
+          "name": "Calls · Start <Pay> session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Payments.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Payments.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                }
+              ]
+            },
+            "description": "**Start a <Pay> session on an existing call (REST equivalent of `<Pay>` TwiML)**\nInitiates a PCI Pay session against the live call leg. Mirrors\nthe TwiML `<Pay>` verb's parser + state machine; every\nattribute below is accepted and validated. The runtime\n(Stripe charge / tokenize) is currently gated; until it is\nwired, both surfaces accept and log without invoking the\nStripe connector.\n\nPer-tenant BYO is binding: the tenant's account row must have\n`pay_enabled = true` AND `stripe_secret_key` set (admin\nopt-in). No server-level Stripe key fallback — multi-tenancy\ndemands no fallback.\n\n`IdempotencyKey` is accepted and persisted on the row for\ndiagnostic visibility; replay dedup is NOT enforced today.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `payments.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IdempotencyKey\": \"\",\n  \"StatusCallback\": \"\",\n  \"BankAccountType\": \"\",\n  \"ChargeAmount\": \"\",\n  \"Currency\": \"USD\",\n  \"Description\": \"\",\n  \"Input\": \"dtmf\",\n  \"MinPostalCodeLength\": 0,\n  \"Parameter\": \"\",\n  \"PaymentConnector\": \"Default\",\n  \"PaymentMethod\": \"\",\n  \"PostalCode\": true,\n  \"SecurityCode\": true,\n  \"Timeout\": 5,\n  \"TokenType\": \"one-time\",\n  \"ValidCardTypes\": \"\",\n  \"RequireMatchingInputs\": \"\",\n  \"Confirmation\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calls · Update <Pay> session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Payments/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Calls",
+                ":CallSid",
+                "Payments",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "<CallSid>",
+                  "description": "Path parameter: CallSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Update a Pay session — Status=complete or Status=cancel**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `payments.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IdempotencyKey\": \"\",\n  \"StatusCallback\": \"\",\n  \"Capture\": \"\",\n  \"Status\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Calls · List recordings",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=&Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -331,6 +491,24 @@
                   "key": "DateCreated>",
                   "value": "",
                   "description": "Filter to recordings created strictly after this UTC date.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
                   "disabled": true
                 }
               ],
@@ -387,7 +565,7 @@
                 }
               ]
             },
-            "description": "**Start a recording mid-call**\nBegins a fresh recording on the live call leg via FreeSWITCH's\n`uuid_record`. The new Recording resource is returned in the\n201 response. Distinct from `Record=true` on `POST /Calls`,\nwhich captures from the start of the call.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.create`",
+            "description": "**Start a recording mid-call**\nBegins a fresh recording on the live call leg. The new\nRecording resource is returned in the 201 response. Distinct\nfrom `Record=true` on `POST /Calls`, which captures from the\nstart of the call.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.create`",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"PlayBeep\": true,\n  \"RecordingStatusCallbackMethod\": \"POST\"\n}",
@@ -483,7 +661,7 @@
                 }
               ]
             },
-            "description": "**Update a mid-call recording's status**\nWires `uuid_record stop|pause|resume` on the live call leg.\nAll three transitions return 200 + the post-mutation\nRecording resource. Tenant-scoped: a RecordingSid that\nbelongs to a different account returns 404 without leaking\nexistence.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.update`",
+            "description": "**Update a mid-call recording's status**\nApplies stop / pause / resume on the live recording.\nAll three transitions return 200 + the post-mutation\nRecording resource. Tenant-scoped: a RecordingSid that\nbelongs to a different account returns 404 without leaking\nexistence.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `callRecordings.update`",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"Status\": \"stopped\"\n}",
@@ -568,7 +746,7 @@
                 }
               ]
             },
-            "description": "**List active SIPREC sessions for the call**\nReturns 0 or 1 entries — mod_siprec supports one mirror per\ncall uuid. Pagination envelope is the Twilio-compatible shape.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.list`"
+            "description": "**List active SIPREC sessions for the call**\nReturns 0 or 1 entries — only one SIPREC mirror per call leg\nis supported. Pagination envelope is the Twilio-compatible\nshape.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.list`"
           },
           "response": []
         },
@@ -608,7 +786,7 @@
                 }
               ]
             },
-            "description": "**Start a SIPREC session on the call (REST equivalent of `<Start><Siprec>`)**\nInvokes the `siprec` dialplan app via `uuid_broadcast` against\nthe configured connector profile. Returns the new Siprec\nresource with an SR-prefixed sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.create`",
+            "description": "**Start a SIPREC session on the call (REST equivalent of `<Start><Siprec>`)**\nStarts a SIPREC mirror against the configured connector\nprofile on the live call leg. Returns the new Siprec\nresource with an SR-prefixed sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.create`",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"StatusCallbackMethod\": \"POST\"\n}",
@@ -704,7 +882,7 @@
                 }
               ]
             },
-            "description": "**Update a SIPREC session — clears tracking only**\nStefanYohansson/mod_siprec doesn't expose a stop verb; the SRS\nrecording session continues until the call hangs up. This\nendpoint clears callBroadcast's session-tracking entry only.\nDocumented mod_siprec limitation.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.update`",
+            "description": "**Update a SIPREC session — clears tracking only**\nThe SIPREC integration doesn't expose a stop verb; the SRS\nrecording session continues until the call hangs up. This\nendpoint clears VoiceML's session-tracking entry only.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `siprec.update`",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"Status\": \"stopped\"\n}",
@@ -748,7 +926,7 @@
                 }
               ]
             },
-            "description": "**List active media streams for the call**\nReturns 0 or 1 entries — mod_audio_fork supports a single\nactive fork per call uuid, matching the slot model on the\ncallBroadcast tracker. Pagination envelope is the canonical\nTwilio shape so SDK auto-paginators round-trip cleanly.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.list`"
+            "description": "**List active media streams for the call**\nReturns 0 or 1 entries — mod_audio_fork supports a single\nactive fork per call uuid, matching the slot model on the\nVoiceML tracker. Pagination envelope is the Twilio-compatible\nshape so SDK auto-paginators round-trip cleanly.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.list`"
           },
           "response": []
         },
@@ -928,7 +1106,7 @@
                 }
               ]
             },
-            "description": "**List active transcriptions for the call**\nReturns 0 or 1 entries. Pagination envelope is the canonical\nTwilio shape.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `transcriptions.list`"
+            "description": "**List active transcriptions for the call**\nReturns 0 or 1 entries. Pagination envelope is the Twilio-compatible\nshape.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `transcriptions.list`"
           },
           "response": []
         },
@@ -1113,7 +1291,7 @@
                 }
               ]
             },
-            "description": "**Send a user-defined message on a live call (NOT IMPLEMENTED)**\nTwilio's chat-style messages on a live call. Real\nmessage-passing infrastructure (a websocket on the\ncustomer-facing leg) that's out of scope for callBroadcast.\nReturns 501 with Twilio code 20501. The empty request body\nschema is declared so codegen tooling emits a method\nsignature consistent with Twilio's SDK.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `userDefinedMessages.create`",
+            "description": "**Send a user-defined message on a live call (NOT IMPLEMENTED)**\nTwilio's chat-style messages on a live call. Real\nmessage-passing infrastructure (a websocket on the\ncustomer-facing leg) that's out of scope for VoiceML.\nReturns 501 with Twilio code 20501. The empty request body\nschema is declared so codegen tooling emits a method\nsignature consistent with Twilio's SDK.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `userDefinedMessages.create`",
             "body": {
               "mode": "raw",
               "raw": "{}",
@@ -1248,7 +1426,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Notifications.json?MessageDate=&MessageDate<=&MessageDate>=&Log=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Notifications.json?Page=&PageSize=&PageToken=&MessageDate=&MessageDate<=&MessageDate>=&Log=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1259,6 +1437,24 @@
                 "Notifications.json"
               ],
               "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                },
                 {
                   "key": "MessageDate",
                   "value": "",
@@ -1342,7 +1538,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences.json?FriendlyName=&Status=&DateCreated=&DateCreated<=&DateCreated>=&DateUpdated=&DateUpdated<=&DateUpdated>=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences.json?FriendlyName=&Status=&DateCreated=&DateCreated<=&DateCreated>=&DateUpdated=&DateUpdated<=&DateUpdated>=&Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1368,7 +1564,7 @@
                 {
                   "key": "DateCreated",
                   "value": "",
-                  "description": "Twilio-compatible parameter. VoiceML's conference list is a live FreeSWITCH query with no historical store — accepted but does not narrow the result set.",
+                  "description": "Twilio-compatible parameter. VoiceML's conference list is a live query with no historical store — accepted but does not narrow the result set.",
                   "disabled": true
                 },
                 {
@@ -1400,6 +1596,24 @@
                   "value": "",
                   "description": "Twilio-compatible date filter — accept-but-no-op on live conference list.",
                   "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
                 }
               ],
               "variable": [
@@ -1410,7 +1624,7 @@
                 }
               ]
             },
-            "description": "**List active conferences for the account**\nReturns conferences currently active in mod_conference for\nthis tenant. Live query — no caching, always reflects the\nFreeSWITCH state of the moment. Conferences appear once a\nfirst participant joins (typically via TwiML\n`<Dial><Conference>`) and disappear as soon as the last\nparticipant leaves.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `conferences.list`"
+            "description": "**List active conferences for the account**\nReturns conferences currently active for this tenant. Live\nquery — no caching, always reflects state at request time.\nConferences appear once a first participant joins (typically\nvia TwiML `<Dial><Conference>`) and disappear as soon as the\nlast participant leaves.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `conferences.list`"
           },
           "response": []
         },
@@ -1420,7 +1634,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants.json?Muted=&Hold=&Coaching=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Participants.json?Muted=&Hold=&Coaching=&Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1449,6 +1663,24 @@
                   "key": "Coaching",
                   "value": "",
                   "description": "Filter to participants with this Coaching state.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
                   "disabled": true
                 }
               ],
@@ -1661,7 +1893,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=&Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1690,6 +1922,24 @@
                   "key": "DateCreated>",
                   "value": "",
                   "description": "Filter to recordings created strictly after this UTC date.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
                   "disabled": true
                 }
               ],
@@ -1932,6 +2182,243 @@
       ]
     },
     {
+      "name": "Messages",
+      "description": "SMS Messages — send, list, fetch, redact / cancel, and delete. Twilio-compatible /Messages REST surface.",
+      "item": [
+        {
+          "name": "Messages · List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages.json?To=&From=&DateSent=&DateSent<=&DateSent>=&Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Messages.json"
+              ],
+              "query": [
+                {
+                  "key": "To",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "From",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "DateSent",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "DateSent<",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "DateSent>",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List Messages for the account (paged, DateCreated DESC)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `messages.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "Messages · Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Messages.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Send an SMS**\nSends `Body` to `To` via the configured SMS provider. When\nthe provider is not configured the row is still persisted\nwith status=failed and error_code=21609 so the integrator can\nintrospect the rejection through GET /Messages/{Sid}.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `messages.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"To\": \"\",\n  \"From\": \"\",\n  \"Body\": \"\",\n  \"MessagingServiceSid\": \"\",\n  \"StatusCallback\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Messages · Fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Messages",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a Message**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `messages.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "Messages · Update (redact / cancel)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Messages",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Update a Message (Body redaction; Status=canceled rejected)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `messages.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Body\": \"\",\n  \"Status\": \"canceled\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Messages · Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "Messages",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Delete a Message**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `messages.delete`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Queues",
       "description": "Queue resources and members — create, list, fetch, update, delete queues; peek, fetch, and dequeue members.",
       "item": [
@@ -1941,7 +2428,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues.json",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues.json?Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1950,6 +2437,26 @@
                 "Accounts",
                 ":AccountSid",
                 "Queues.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
               ],
               "variable": [
                 {
@@ -2011,7 +2518,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members.json",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Queues/:QueueSid/Members.json?Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2022,6 +2529,26 @@
                 "Queues",
                 ":QueueSid",
                 "Members.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
               ],
               "variable": [
                 {
@@ -2350,7 +2877,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications.json?FriendlyName=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Applications.json?FriendlyName=&Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2365,6 +2892,24 @@
                   "key": "FriendlyName",
                   "value": "",
                   "description": "Filter to Applications with this exact FriendlyName.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
                   "disabled": true
                 }
               ],
@@ -2550,7 +3095,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=&CallSid=&ConferenceSid=&IncludeSoftDeleted=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings.json?DateCreated=&DateCreated<=&DateCreated>=&CallSid=&ConferenceSid=&IncludeSoftDeleted=&Page=&PageSize=&PageToken=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2595,6 +3140,24 @@
                   "key": "IncludeSoftDeleted",
                   "value": "",
                   "description": "Twilio-compatible parameter. VoiceML hard-deletes recordings —\nthere is no soft-delete store — so this parameter is\naccepted but does not change the result set.\n",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
                   "disabled": true
                 }
               ],
@@ -2732,7 +3295,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers.json?PhoneNumber=&FriendlyName=&Beta=&Origin=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers.json?Page=&PageSize=&PageToken=&PhoneNumber=&FriendlyName=&Beta=&Origin=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2744,9 +3307,27 @@
               ],
               "query": [
                 {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                },
+                {
                   "key": "PhoneNumber",
                   "value": "",
-                  "description": "Exact-match filter on the E.164 phone number. Twilio's\ncanonical lookup pattern is\n`GET /IncomingPhoneNumbers?PhoneNumber=+1...` followed by\n`GET /IncomingPhoneNumbers/{sid}` using the `sid` from the\nlist result. SDK clients (twilio-python's\n`.list(phone_number=...)` etc.) issue this pattern; the\nfilter exists so it Just Works against callBroadcast.\nReturns a 0-or-1-row envelope.\n",
+                  "description": "Exact-match filter on the E.164 phone number. Twilio's\ncanonical lookup pattern is\n`GET /IncomingPhoneNumbers?PhoneNumber=+1...` followed by\n`GET /IncomingPhoneNumbers/{sid}` using the `sid` from the\nlist result. Twilio-compatible SDK clients issue this\npattern; the filter is supported so the same call pattern\nworks against VoiceML. Returns a 0-or-1-row envelope.\n",
                   "disabled": true
                 },
                 {
@@ -2944,7 +3525,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/Local.json?PhoneNumber=&FriendlyName=&Beta=&Origin=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/Local.json?Page=&PageSize=&PageToken=&PhoneNumber=&FriendlyName=&Beta=&Origin=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2956,6 +3537,24 @@
                 "Local.json"
               ],
               "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                },
                 {
                   "key": "PhoneNumber",
                   "value": "",
@@ -3038,7 +3637,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/Mobile.json?PhoneNumber=&FriendlyName=&Beta=&Origin=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/Mobile.json?Page=&PageSize=&PageToken=&PhoneNumber=&FriendlyName=&Beta=&Origin=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3050,6 +3649,24 @@
                 "Mobile.json"
               ],
               "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                },
                 {
                   "key": "PhoneNumber",
                   "value": "",
@@ -3132,7 +3749,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/TollFree.json?PhoneNumber=&FriendlyName=&Beta=&Origin=",
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/IncomingPhoneNumbers/TollFree.json?Page=&PageSize=&PageToken=&PhoneNumber=&FriendlyName=&Beta=&Origin=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3144,6 +3761,24 @@
                 "TollFree.json"
               ],
               "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                },
                 {
                   "key": "PhoneNumber",
                   "value": "",
@@ -3240,7 +3875,7 @@
                 "health"
               ]
             },
-            "description": "**Deep liveness probe**\nComposite probe with two-tier severity. Hard checks (memdb,\ndisk free space, FreeSWITCH process + required modules +\nSofia profile RUNNING) flip the LB-facing `ok` boolean.\nSoft checks (host CPU loadavg, memory pressure, FS workload\npercents, Raft cluster) surface in `warnings` only — the LB\nstays in rotation. Result cached 5 s on full success.\n\n\nNo authentication required.\n\nOperationId: `health.check`",
+            "description": "**Deep liveness probe**\nComposite probe with two-tier severity. Hard checks (storage,\ndisk free space, voice stack processes + required modules +\nSIP profile state) flip the LB-facing `ok` boolean. Soft\nchecks (host CPU loadavg, memory pressure, workload percents,\ncluster health) surface in `warnings` only — the LB stays in\nrotation. Result cached 5 s on full success.\n\n\nNo authentication required.\n\nOperationId: `health.check`",
             "auth": {
               "type": "noauth"
             }

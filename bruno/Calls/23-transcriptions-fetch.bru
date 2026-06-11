@@ -1,12 +1,12 @@
 meta {
-  name: Calls · Update transcription
+  name: Calls · Fetch transcription
   type: http
-  seq: 22
+  seq: 23
 }
 
-post {
+get {
   url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:CallSid/Transcriptions/:Sid.json
-  body: json
+  body: none
   auth: inherit
 }
 
@@ -16,20 +16,10 @@ params:path {
   Sid: <Sid>
 }
 
-headers {
-  Content-Type: application/json
-}
-
-body:json {
-{
-  "Status": "stopped"
-}
-}
-
 docs {
-**Update a transcription — only Status=stopped is meaningful**
+**Fetch a single transcription by sid**
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
 
-OperationId: `transcriptions.update`
+OperationId: `transcriptions.fetch`
 }

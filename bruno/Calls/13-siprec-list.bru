@@ -1,7 +1,7 @@
 meta {
   name: Calls · List SIPREC sessions
   type: http
-  seq: 11
+  seq: 13
 }
 
 get {
@@ -17,8 +17,9 @@ params:path {
 
 docs {
 **List active SIPREC sessions for the call**
-Returns 0 or 1 entries — mod_siprec supports one mirror per
-call uuid. Pagination envelope is the Twilio-compatible shape.
+Returns 0 or 1 entries — only one SIPREC mirror per call leg
+is supported. Pagination envelope is the Twilio-compatible
+shape.
 
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.

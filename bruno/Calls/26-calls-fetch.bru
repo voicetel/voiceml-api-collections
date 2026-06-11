@@ -1,0 +1,24 @@
+meta {
+  name: Calls · Fetch
+  type: http
+  seq: 26
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Calls/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a call**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `calls.fetch`
+}

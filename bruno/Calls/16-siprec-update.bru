@@ -1,7 +1,7 @@
 meta {
   name: Calls · Update SIPREC session
   type: http
-  seq: 14
+  seq: 16
 }
 
 post {
@@ -28,10 +28,9 @@ body:json {
 
 docs {
 **Update a SIPREC session — clears tracking only**
-StefanYohansson/mod_siprec doesn't expose a stop verb; the SRS
+The SIPREC integration doesn't expose a stop verb; the SRS
 recording session continues until the call hangs up. This
-endpoint clears callBroadcast's session-tracking entry only.
-Documented mod_siprec limitation.
+endpoint clears VoiceML's session-tracking entry only.
 
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.

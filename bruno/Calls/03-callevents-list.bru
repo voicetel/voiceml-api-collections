@@ -15,9 +15,15 @@ params:path {
   CallSid: <CallSid>
 }
 
+query {
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
+}
+
 docs {
 **List per-call lifecycle events (compat stub)**
-Twilio's fine-grained per-call event stream. callBroadcast
+Twilio's fine-grained per-call event stream. VoiceML
 delivers equivalent data via `StatusCallback` (initiated /
 ringing / answered / completed); this endpoint is mounted
 as a stub returning an empty list so SDK helpers iterate
