@@ -142,7 +142,7 @@ tags:
       separately so SDK codegen can choose to skip these or emit them
       under a non-Twilio module.
 
-# Redoc sidebar grouping — mirrors voicetel.com/docs/api/v0.6/voiceml/.
+# Redoc sidebar grouping — mirrors voicetel.com/docs/api/v0.7/voiceml/.
 # Operation tags stay Api20100401* for SDK codegen compatibility.
 x-tagGroups:
   - name: Voice — calls

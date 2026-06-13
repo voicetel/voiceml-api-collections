@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "voiceml-api-v0-7-0",
     "name": "VoiceML API (v0.7.0)",
-    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.7.0** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.6/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
+    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.7.0** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.7/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "contact": {
       "name": "VoiceTel",
