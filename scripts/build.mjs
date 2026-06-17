@@ -141,6 +141,7 @@ const TAG_TO_FOLDER = {
   Api20100401SipCredential: 'SIP',
   Api20100401SipIpAccessControlList: 'SIP',
   Api20100401SipIpAddress: 'SIP',
+  RoutesV2SipDomain: 'SIP',
   Diagnostic: 'Diagnostics',
 };
 

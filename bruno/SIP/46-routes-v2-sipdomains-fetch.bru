@@ -1,0 +1,28 @@
+meta {
+  name: SIP routes.v2.sipDomains.fetch
+  type: http
+  seq: 46
+}
+
+get {
+  url: {{baseUrl}}/v2/SipDomains/:SipDomain
+  body: none
+  auth: inherit
+}
+
+params:path {
+  SipDomain: <SipDomain>
+}
+
+docs {
+**Fetch a SIP domain's Inbound Processing Region config**
+Twilio Inbound Processing Region API (routes/v2). Keyed by the
+domain name; the account is resolved from HTTP Basic auth. 404
+when the named domain does not exist for the authenticated
+account.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `routes.v2.sipDomains.fetch`
+}

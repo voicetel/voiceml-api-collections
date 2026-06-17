@@ -32,7 +32,7 @@ Official **Postman** and **Bruno** collections for the [VoiceML REST API](https:
 | `scripts/build.mjs` | Regenerates both collections from the spec. |
 | `scripts/validate.mjs` | Asserts every `operationId` in the spec is represented in both collections. |
 
-All **126 operations** across **9 resource families** are covered:
+All **128 operations** across **9 resource families** are covered:
 
 | Family | Endpoints | Highlights |
 |--------|-----------|------------|
@@ -43,7 +43,7 @@ All **126 operations** across **9 resource families** are covered:
 | **Applications** | 5 | TwiML Application CRUD. |
 | **Recordings** | 4 | Account-scoped catalog, WAV download. |
 | **IncomingPhoneNumbers** | 11 | Tenant self-serve DID management (Local / Mobile / TollFree variants). |
-| **SIP** | 45 | SIP Trunking: Domains, CredentialLists, IpAccessControlLists, Domain Auth Mappings (calls + registrations). |
+| **SIP** | 47 | SIP Trunking: Domains, CredentialLists, IpAccessControlLists, Domain Auth Mappings (calls + registrations), Inbound Processing Region (routes/v2). |
 | **Diagnostics** | 4 | Health probe, OpenAPI self-publish (no auth). |
 
 ## Importing to Postman

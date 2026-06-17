@@ -1,15 +1,15 @@
 {
   "info": {
-    "_postman_id": "voiceml-api-v0-8-0",
-    "name": "VoiceML API (v0.8.0)",
-    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.8.0** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.7/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
+    "_postman_id": "voiceml-api-v0-8-1",
+    "name": "VoiceML API (v0.8.1)",
+    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.8.1** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.7/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "contact": {
       "name": "VoiceTel",
       "email": "support@voicetel.com",
       "url": "https://voicetel.com"
     },
-    "version": "0.8.0"
+    "version": "0.8.1"
   },
   "auth": {
     "type": "basic",
@@ -5980,6 +5980,74 @@
               ]
             },
             "description": "**Delete a SIP IpAccessControlList**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_access_control_lists.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · routes.v2.sipDomains.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v2/SipDomains/:SipDomain",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "SipDomains",
+                ":SipDomain"
+              ],
+              "variable": [
+                {
+                  "key": "SipDomain",
+                  "value": "<SipDomain>",
+                  "description": "Path parameter: SipDomain"
+                }
+              ]
+            },
+            "description": "**Fetch a SIP domain's Inbound Processing Region config**\nTwilio Inbound Processing Region API (routes/v2). Keyed by the\ndomain name; the account is resolved from HTTP Basic auth. 404\nwhen the named domain does not exist for the authenticated\naccount.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `routes.v2.sipDomains.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · routes.v2.sipDomains.update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v2/SipDomains/:SipDomain",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "SipDomains",
+                ":SipDomain"
+              ],
+              "variable": [
+                {
+                  "key": "SipDomain",
+                  "value": "<SipDomain>",
+                  "description": "Path parameter: SipDomain"
+                }
+              ]
+            },
+            "description": "**Set a SIP domain's Inbound Processing Region**\nUpdates the inbound processing region and/or friendly name of an\nexisting SIP domain (create the domain first via the 2010-04-01\nSIP Domains API). Keyed by domain name; account resolved from\nHTTP Basic auth.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `routes.v2.sipDomains.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           },
           "response": []
         }

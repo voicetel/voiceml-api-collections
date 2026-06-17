@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: VoiceML — Twilio-compatible REST API
-  version: "0.8.0"
+  version: "0.8.1"
   summary: Twilio-compatible voice (inbound + outbound), SMS, conferencing, recording, transcription, and payment platform
   description: |
     VoiceML exposes a Twilio-compatible REST + TwiML surface covering
@@ -140,6 +140,14 @@ tags:
       Auth/Registrations mapping surfaces under `/SIP/Domains/{Sid}`.
       create/list/fetch/delete (no update); the response echoes the
       mapped list's shape. Twilio-parity tag.
+  - name: RoutesV2SipDomain
+    x-displayName: SIP / Inbound Processing Region
+    description: |
+      The routes/v2 SipDomain resource — Twilio's Inbound Processing
+      Region API. fetch/update under `/v2/SipDomains/{SipDomain}`, keyed
+      by the registrable domain name and authenticated from HTTP Basic
+      credentials (no `/Accounts/{AccountSid}` path segment). Pins which
+      region processes inbound calls for the domain. Twilio-parity tag.
   - name: Api20100401Message
     x-displayName: Messages
     description: |
@@ -817,6 +825,19 @@ components:
           type: object
           nullable: true
           additionalProperties: { type: string }
+
+    RoutesV2SipDomain:
+      type: object
+      required: [sid, sip_domain, account_sid, date_created, date_updated]
+      properties:
+        sip_domain:    { nullable: true, type: string, example: "example.sip.voiceml.example.com" }
+        url:           { nullable: true, type: string, format: uri }
+        sid:           { nullable: true, type: string, pattern: '^QQ[0-9a-fA-F]{32}$', example: "QQ0123456789abcdef0123456789abcdef" }
+        account_sid:   { nullable: true, type: string, pattern: '^AC[0-9a-fA-F]{32}$' }
+        friendly_name: { nullable: true, type: string }
+        voice_region:  { nullable: true, type: string, description: "Inbound Processing Region that handles inbound calls for this SIP domain." }
+        date_created:  { nullable: true, type: string, format: date-time }
+        date_updated:  { nullable: true, type: string, format: date-time }
 
     SipDomainList:
       type: object
@@ -4703,6 +4724,67 @@ paths:
         '404': { $ref: '#/components/responses/NotFound' }
         '503':
           description: Phone-number store not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /v2/SipDomains/{SipDomain}:
+    parameters:
+      - name: SipDomain
+        in: path
+        required: true
+        schema: { type: string }
+        description: The registrable SIP domain name (e.g. example.sip.voiceml.example.com).
+    get:
+      operationId: routes.v2.sipDomains.fetch
+      tags: [RoutesV2SipDomain]
+      summary: Fetch a SIP domain's Inbound Processing Region config
+      description: |
+        Twilio Inbound Processing Region API (routes/v2). Keyed by the
+        domain name; the account is resolved from HTTP Basic auth. 404
+        when the named domain does not exist for the authenticated
+        account.
+      responses:
+        '200':
+          description: The SIP domain Inbound Processing Region resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RoutesV2SipDomain' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP domains store not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    post:
+      operationId: routes.v2.sipDomains.update
+      tags: [RoutesV2SipDomain]
+      summary: Set a SIP domain's Inbound Processing Region
+      description: |
+        Updates the inbound processing region and/or friendly name of an
+        existing SIP domain (create the domain first via the 2010-04-01
+        SIP Domains API). Keyed by domain name; account resolved from
+        HTTP Basic auth.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                VoiceRegion:  { type: string, description: "Inbound Processing Region for voice." }
+                FriendlyName: { type: string }
+      responses:
+        '200':
+          description: The updated SIP domain Inbound Processing Region resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RoutesV2SipDomain' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP domains store not configured.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
