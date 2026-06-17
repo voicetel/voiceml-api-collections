@@ -1,0 +1,37 @@
+meta {
+  name: SIP sip_domains.create
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "DomainName": ""
+}
+}
+
+docs {
+**Create a SIP Domain**
+Registers a SIP Domain — the SIP-ingress surface that routes
+inbound INVITEs to TwiML via `voice_url`. `DomainName` is
+required.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_domains.create`
+}

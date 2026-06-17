@@ -1,0 +1,32 @@
+meta {
+  name: SIP sip_domains.update
+  type: http
+  seq: 34
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:Sid.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a SIP Domain (partial — only set fields are touched)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_domains.update`
+}

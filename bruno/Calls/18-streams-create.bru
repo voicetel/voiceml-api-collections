@@ -21,16 +21,16 @@ headers {
 
 body:json {
 {
-  "Url": "",
-  "StatusCallbackMethod": "POST"
+  "StatusCallbackMethod": "POST",
+  "Url": ""
 }
 }
 
 docs {
 **Start a media stream on the call (REST equivalent of `<Connect><Stream>`/`<Start><Stream>`)**
-Issues `uuid_audio_fork start` on the call leg via the same
-executor primitive the TwiML verbs use. Returns the new Stream
-resource with an MZ-prefixed sid.
+Starts a media fork on the live call leg. Equivalent to
+`<Connect><Stream>` / `<Start><Stream>` in TwiML. Returns
+the new Stream resource with an MZ-prefixed sid.
 
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.

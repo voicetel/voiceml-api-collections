@@ -1,0 +1,24 @@
+meta {
+  name: SIP sip_ip_access_control_lists.fetch
+  type: http
+  seq: 43
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a SIP IpAccessControlList**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_ip_access_control_lists.fetch`
+}

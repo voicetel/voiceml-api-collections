@@ -135,6 +135,12 @@ const TAG_TO_FOLDER = {
   Api20100401Application: 'Applications',
   Api20100401Recording: 'Recordings',
   Api20100401IncomingPhoneNumber: 'IncomingPhoneNumbers',
+  Api20100401SipDomain: 'SIP',
+  Api20100401SipDomainMapping: 'SIP',
+  Api20100401SipCredentialList: 'SIP',
+  Api20100401SipCredential: 'SIP',
+  Api20100401SipIpAccessControlList: 'SIP',
+  Api20100401SipIpAddress: 'SIP',
   Diagnostic: 'Diagnostics',
 };
 
@@ -146,6 +152,7 @@ const FOLDER_ORDER = [
   'Applications',
   'Recordings',
   'IncomingPhoneNumbers',
+  'SIP',
   'Diagnostics',
 ];
 

@@ -1,0 +1,38 @@
+meta {
+  name: SIP sip_ip_addresses.create
+  type: http
+  seq: 39
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:IpAccessControlListSid/IpAddresses.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  IpAccessControlListSid: <IpAccessControlListSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "FriendlyName": "",
+  "IpAddress": ""
+}
+}
+
+docs {
+**Create a SIP IpAddress under an IpAccessControlList**
+`FriendlyName` and `IpAddress` are both required.
+`CidrPrefixLength` defaults to 32 (single host) when omitted.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_ip_addresses.create`
+}

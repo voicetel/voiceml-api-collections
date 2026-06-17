@@ -1,0 +1,38 @@
+meta {
+  name: SIP sip_domain_ip_access_control_list_mappings.create
+  type: http
+  seq: 30
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/IpAccessControlListMappings.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  DomainSid: <DomainSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "IpAccessControlListSid": ""
+}
+}
+
+docs {
+**Map an IpAccessControlList onto a SIP Domain**
+Binds an existing IpAccessControlList (`AL…`) to the Domain.
+The response echoes the mapped list's shape; the mapping's `sid`
+IS the IpAccessControlList's sid.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_domain_ip_access_control_list_mappings.create`
+}

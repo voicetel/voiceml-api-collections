@@ -1,0 +1,30 @@
+meta {
+  name: SIP sip_ip_access_control_lists.list
+  type: http
+  seq: 36
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~FriendlyName: 
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
+}
+
+docs {
+**List SIP IpAccessControlLists for the account (paged)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_ip_access_control_lists.list`
+}

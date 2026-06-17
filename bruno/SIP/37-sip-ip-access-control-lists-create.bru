@@ -1,0 +1,31 @@
+meta {
+  name: SIP sip_ip_access_control_lists.create
+  type: http
+  seq: 37
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create a SIP IpAccessControlList**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_ip_access_control_lists.create`
+}

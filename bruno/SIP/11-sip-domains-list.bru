@@ -1,0 +1,30 @@
+meta {
+  name: SIP sip_domains.list
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~FriendlyName: 
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
+}
+
+docs {
+**List SIP Domains for the account (paged)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_domains.list`
+}

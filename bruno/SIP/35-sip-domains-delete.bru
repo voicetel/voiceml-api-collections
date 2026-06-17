@@ -1,0 +1,26 @@
+meta {
+  name: SIP sip_domains.delete
+  type: http
+  seq: 35
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Delete a SIP Domain**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_domains.delete`
+}

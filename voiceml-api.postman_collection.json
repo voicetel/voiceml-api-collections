@@ -1,15 +1,15 @@
 {
   "info": {
-    "_postman_id": "voiceml-api-v0-7-0",
-    "name": "VoiceML API (v0.7.0)",
-    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.7.0** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.7/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
+    "_postman_id": "voiceml-api-v0-8-0",
+    "name": "VoiceML API (v0.8.0)",
+    "description": "# VoiceML API — Official Postman Collection\n\nVersion: **0.8.0** · Spec: OpenAPI 3.1 · Host: `https://voiceml.voicetel.com`\n\nTwilio-compatible REST surface for voice, SMS, and AMD. Every endpoint is grouped by resource family.\n\n## Auth model\n\nHTTP Basic Auth on all authenticated endpoints:\n- **Username** = your AccountSid (`AC` + 32 hex chars)\n- **Password** = your per-account API key\n\nThe username must match the `:AccountSid` path parameter on account-scoped routes.\n\nDiagnostic endpoints (`/health`, `/openapi.*`) require no authentication.\n\n## Documentation\n\n- API reference: https://voicetel.com/docs/api/v0.7/voiceml/\n- Validator: https://voicetel.com/voiceml/validator/\n- SDK catalogue: https://voicetel.com/docs/voiceml-sdks/",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "contact": {
       "name": "VoiceTel",
       "email": "support@voicetel.com",
       "url": "https://voicetel.com"
     },
-    "version": "0.7.0"
+    "version": "0.8.0"
   },
   "auth": {
     "type": "basic",
@@ -167,7 +167,7 @@
             "description": "**Create (originate) a call**\nOriginates an outbound call. The `To` and `From`\nnumbers are validated and normalised to E.164 against the\nauthenticated tenant's `phone_regions` list — set per-account in\nthe admin API. Empty list disables validation; multi-region\ntenants accept numbers valid in any listed region.\n`MachineDetection` is optional; omitting it skips AMD entirely.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.create`",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"To\": \"\",\n  \"From\": \"\",\n  \"Method\": \"POST\",\n  \"FallbackMethod\": \"POST\",\n  \"StatusCallbackMethod\": \"POST\",\n  \"AsyncAmdStatusCallbackMethod\": \"POST\",\n  \"Record\": false,\n  \"RecordingStatusCallbackMethod\": \"POST\",\n  \"Timeout\": 60\n}",
+              "raw": "{\n  \"AsyncAmdStatusCallbackMethod\": \"POST\",\n  \"FallbackMethod\": \"POST\",\n  \"From\": \"\",\n  \"Method\": \"POST\",\n  \"Record\": false,\n  \"RecordingStatusCallbackMethod\": \"POST\",\n  \"StatusCallbackMethod\": \"POST\",\n  \"Timeout\": 60,\n  \"To\": \"\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -926,7 +926,7 @@
                 }
               ]
             },
-            "description": "**List active media streams for the call**\nReturns 0 or 1 entries — mod_audio_fork supports a single\nactive fork per call uuid, matching the slot model on the\nVoiceML tracker. Pagination envelope is the Twilio-compatible\nshape so SDK auto-paginators round-trip cleanly.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.list`"
+            "description": "**List active media streams for the call**\nReturns 0 or 1 entries — the runtime supports a single\nactive media fork per call, matching the slot model on the\nVoiceML tracker. Pagination envelope is the Twilio-compatible\nshape so SDK auto-paginators round-trip cleanly.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.list`"
           },
           "response": []
         },
@@ -966,10 +966,10 @@
                 }
               ]
             },
-            "description": "**Start a media stream on the call (REST equivalent of `<Connect><Stream>`/`<Start><Stream>`)**\nIssues `uuid_audio_fork start` on the call leg via the same\nexecutor primitive the TwiML verbs use. Returns the new Stream\nresource with an MZ-prefixed sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.create`",
+            "description": "**Start a media stream on the call (REST equivalent of `<Connect><Stream>`/`<Start><Stream>`)**\nStarts a media fork on the live call leg. Equivalent to\n`<Connect><Stream>` / `<Start><Stream>` in TwiML. Returns\nthe new Stream resource with an MZ-prefixed sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `streams.create`",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Url\": \"\",\n  \"StatusCallbackMethod\": \"POST\"\n}",
+              "raw": "{\n  \"StatusCallbackMethod\": \"POST\",\n  \"Url\": \"\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1376,7 +1376,7 @@
             "description": "**Update or terminate a live call**\nThree flows on the same endpoint (mirrors Twilio):\n  * `Status=completed|canceled` — terminate the call.\n  * `Twiml=<inline>` — execute inline TwiML on the live call\n    (wins over `Url` when both are present).\n  * `Url=…` — fetch new TwiML and execute it on the live call\n    (live redirect / hot swap).\nIf `Status` is present alongside any TwiML source, `Status`\nwins. The success response is the full Call resource — same\nshape `GET` returns — so SDK deserialisers round-trip.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `calls.update`",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Method\": \"POST\",\n  \"FallbackMethod\": \"POST\"\n}",
+              "raw": "{\n  \"FallbackMethod\": \"POST\",\n  \"Method\": \"POST\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1740,7 +1740,7 @@
             "description": "**Dial a participant into a conference**\nPlaces an outbound call from `From` to `To` that joins the named\nconference on answer via inline TwiML. Returns immediately with\n`status=queued` while the leg is ringing.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `participants.create`",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"From\": \"\",\n  \"To\": \"\",\n  \"StartConferenceOnEnter\": true,\n  \"EndConferenceOnExit\": false\n}",
+              "raw": "{\n  \"EndConferenceOnExit\": false,\n  \"From\": \"\",\n  \"StartConferenceOnEnter\": true,\n  \"To\": \"\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2653,7 +2653,7 @@
             "description": "**Dequeue a specific member to a TwiML URL**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queueMembers.dequeue`",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Url\": \"\",\n  \"Method\": \"POST\"\n}",
+              "raw": "{\n  \"Method\": \"POST\",\n  \"Url\": \"\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2739,7 +2739,7 @@
             "description": "**Dequeue the front member to a TwiML URL**\nPops the longest-waiting member and redirects their call to the\nURL in the body. The member's <Enqueue> wait-loop fetches that\nURL and runs the returned TwiML on their leg as continuation.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `queueMembers.dequeueFront`",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Url\": \"\",\n  \"Method\": \"POST\"\n}",
+              "raw": "{\n  \"Method\": \"POST\",\n  \"Url\": \"\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3852,6 +3852,2134 @@
                 }
               }
             }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "SIP",
+      "item": [
+        {
+          "name": "SIP · sip_credential_lists.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists.json?FriendlyName=&Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists.json"
+              ],
+              "query": [
+                {
+                  "key": "FriendlyName",
+                  "value": "",
+                  "description": "Filter to CredentialLists with this exact FriendlyName.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List SIP CredentialLists for the account (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credential_lists.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credential_lists.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Create a SIP CredentialList**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credential_lists.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credentials.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:CredentialListSid/Credentials.json?Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":CredentialListSid",
+                "Credentials.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CredentialListSid",
+                  "value": "<CredentialListSid>",
+                  "description": "Path parameter: CredentialListSid"
+                }
+              ]
+            },
+            "description": "**List SIP Credentials under a CredentialList (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credentials.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credentials.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:CredentialListSid/Credentials.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":CredentialListSid",
+                "Credentials.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CredentialListSid",
+                  "value": "<CredentialListSid>",
+                  "description": "Path parameter: CredentialListSid"
+                }
+              ]
+            },
+            "description": "**Create a SIP Credential under a CredentialList**\n`Username` and `Password` are both required. `Password` is\nwrite-only — it is accepted here but never echoed back on any\nresponse.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credentials.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Password\": \"\",\n  \"Username\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credentials.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:CredentialListSid/Credentials/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":CredentialListSid",
+                "Credentials",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CredentialListSid",
+                  "value": "<CredentialListSid>",
+                  "description": "Path parameter: CredentialListSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a SIP Credential**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credentials.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credentials.update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:CredentialListSid/Credentials/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":CredentialListSid",
+                "Credentials",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CredentialListSid",
+                  "value": "<CredentialListSid>",
+                  "description": "Path parameter: CredentialListSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Update a SIP Credential (rotate Password; Username is immutable)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credentials.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credentials.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:CredentialListSid/Credentials/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":CredentialListSid",
+                "Credentials",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "CredentialListSid",
+                  "value": "<CredentialListSid>",
+                  "description": "Path parameter: CredentialListSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Delete a SIP Credential**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credentials.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credential_lists.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a SIP CredentialList**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credential_lists.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credential_lists.update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Update a SIP CredentialList (partial — only set fields are touched)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credential_lists.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_credential_lists.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/CredentialLists/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "CredentialLists",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Delete a SIP CredentialList**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_credential_lists.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domains.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains.json?FriendlyName=&Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains.json"
+              ],
+              "query": [
+                {
+                  "key": "FriendlyName",
+                  "value": "",
+                  "description": "Filter to SIP Domains with this exact FriendlyName.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List SIP Domains for the account (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domains.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domains.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Create a SIP Domain**\nRegisters a SIP Domain — the SIP-ingress surface that routes\ninbound INVITEs to TwiML via `voice_url`. `DomainName` is\nrequired.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domains.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"DomainName\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_credential_list_mappings.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/CredentialListMappings.json?Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "CredentialListMappings.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**List call-auth CredentialList mappings on a SIP Domain (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_credential_list_mappings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_credential_list_mappings.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/CredentialListMappings.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "CredentialListMappings.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**Map a CredentialList onto a SIP Domain's call authentication**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_credential_list_mappings.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"CredentialListSid\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_credential_list_mappings.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/CredentialListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "CredentialListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a call-auth CredentialList mapping on a SIP Domain**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_credential_list_mappings.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_credential_list_mappings.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/CredentialListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "CredentialListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Unmap a call-auth CredentialList from a SIP Domain**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_credential_list_mappings.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_ip_access_control_list_mappings.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/IpAccessControlListMappings.json?Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "IpAccessControlListMappings.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**List call-auth IpAccessControlList mappings on a SIP Domain (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_ip_access_control_list_mappings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_ip_access_control_list_mappings.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/IpAccessControlListMappings.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "IpAccessControlListMappings.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**Map an IpAccessControlList onto a SIP Domain's call authentication**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_ip_access_control_list_mappings.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IpAccessControlListSid\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_ip_access_control_list_mappings.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/IpAccessControlListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "IpAccessControlListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a call-auth IpAccessControlList mapping on a SIP Domain**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_ip_access_control_list_mappings.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_calls_ip_access_control_list_mappings.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/IpAccessControlListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Calls",
+                "IpAccessControlListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Unmap a call-auth IpAccessControlList from a SIP Domain**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_calls_ip_access_control_list_mappings.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_registrations_credential_list_mappings.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Registrations/CredentialListMappings.json?Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Registrations",
+                "CredentialListMappings.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**List registration-auth CredentialList mappings on a SIP Domain (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_registrations_credential_list_mappings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_registrations_credential_list_mappings.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Registrations/CredentialListMappings.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Registrations",
+                "CredentialListMappings.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**Map a CredentialList onto a SIP Domain's registration authentication**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_registrations_credential_list_mappings.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"CredentialListSid\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_registrations_credential_list_mappings.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Registrations/CredentialListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Registrations",
+                "CredentialListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a registration-auth CredentialList mapping on a SIP Domain**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_registrations_credential_list_mappings.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_auth_registrations_credential_list_mappings.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Registrations/CredentialListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "Auth",
+                "Registrations",
+                "CredentialListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Unmap a registration-auth CredentialList from a SIP Domain**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_auth_registrations_credential_list_mappings.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_credential_list_mappings.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/CredentialListMappings.json?Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "CredentialListMappings.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**List CredentialList mappings on a SIP Domain (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_credential_list_mappings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_credential_list_mappings.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/CredentialListMappings.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "CredentialListMappings.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**Map a CredentialList onto a SIP Domain**\nBinds an existing CredentialList (`CL…`) to the Domain. The\nresponse echoes the mapped list's shape; the mapping's `sid` IS\nthe CredentialList's sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_credential_list_mappings.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"CredentialListSid\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_credential_list_mappings.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/CredentialListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "CredentialListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a CredentialList mapping on a SIP Domain**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_credential_list_mappings.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_credential_list_mappings.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/CredentialListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "CredentialListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Unmap a CredentialList from a SIP Domain**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_credential_list_mappings.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_ip_access_control_list_mappings.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/IpAccessControlListMappings.json?Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "IpAccessControlListMappings.json"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**List IpAccessControlList mappings on a SIP Domain (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_ip_access_control_list_mappings.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_ip_access_control_list_mappings.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/IpAccessControlListMappings.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "IpAccessControlListMappings.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                }
+              ]
+            },
+            "description": "**Map an IpAccessControlList onto a SIP Domain**\nBinds an existing IpAccessControlList (`AL…`) to the Domain.\nThe response echoes the mapped list's shape; the mapping's `sid`\nIS the IpAccessControlList's sid.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_ip_access_control_list_mappings.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IpAccessControlListSid\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_ip_access_control_list_mappings.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/IpAccessControlListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "IpAccessControlListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch an IpAccessControlList mapping on a SIP Domain**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_ip_access_control_list_mappings.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domain_ip_access_control_list_mappings.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/IpAccessControlListMappings/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":DomainSid",
+                "IpAccessControlListMappings",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "DomainSid",
+                  "value": "<DomainSid>",
+                  "description": "Path parameter: DomainSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Unmap an IpAccessControlList from a SIP Domain**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domain_ip_access_control_list_mappings.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domains.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a SIP Domain**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domains.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domains.update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Update a SIP Domain (partial — only set fields are touched)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domains.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_domains.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "Domains",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Delete a SIP Domain**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_domains.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_access_control_lists.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists.json?FriendlyName=&Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists.json"
+              ],
+              "query": [
+                {
+                  "key": "FriendlyName",
+                  "value": "",
+                  "description": "Filter to IpAccessControlLists with this exact FriendlyName.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**List SIP IpAccessControlLists for the account (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_access_control_lists.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_access_control_lists.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                }
+              ]
+            },
+            "description": "**Create a SIP IpAccessControlList**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_access_control_lists.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_addresses.list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:IpAccessControlListSid/IpAddresses.json?FriendlyName=&Page=&PageSize=&PageToken=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":IpAccessControlListSid",
+                "IpAddresses.json"
+              ],
+              "query": [
+                {
+                  "key": "FriendlyName",
+                  "value": "",
+                  "description": "Filter to IpAddresses with this exact FriendlyName.",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "description": "Zero-based page index.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "description": "Page size. Max 1000; default 50.",
+                  "disabled": true
+                },
+                {
+                  "key": "PageToken",
+                  "value": "",
+                  "description": "The page token. This is provided by the API.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "IpAccessControlListSid",
+                  "value": "<IpAccessControlListSid>",
+                  "description": "Path parameter: IpAccessControlListSid"
+                }
+              ]
+            },
+            "description": "**List SIP IpAddresses under an IpAccessControlList (paged)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_addresses.list`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_addresses.create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:IpAccessControlListSid/IpAddresses.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":IpAccessControlListSid",
+                "IpAddresses.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "IpAccessControlListSid",
+                  "value": "<IpAccessControlListSid>",
+                  "description": "Path parameter: IpAccessControlListSid"
+                }
+              ]
+            },
+            "description": "**Create a SIP IpAddress under an IpAccessControlList**\n`FriendlyName` and `IpAddress` are both required.\n`CidrPrefixLength` defaults to 32 (single host) when omitted.\n\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_addresses.create`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"FriendlyName\": \"\",\n  \"IpAddress\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_addresses.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:IpAccessControlListSid/IpAddresses/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":IpAccessControlListSid",
+                "IpAddresses",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "IpAccessControlListSid",
+                  "value": "<IpAccessControlListSid>",
+                  "description": "Path parameter: IpAccessControlListSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a SIP IpAddress**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_addresses.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_addresses.update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:IpAccessControlListSid/IpAddresses/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":IpAccessControlListSid",
+                "IpAddresses",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "IpAccessControlListSid",
+                  "value": "<IpAccessControlListSid>",
+                  "description": "Path parameter: IpAccessControlListSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Update a SIP IpAddress (partial — only set fields are touched)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_addresses.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_addresses.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:IpAccessControlListSid/IpAddresses/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":IpAccessControlListSid",
+                "IpAddresses",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "IpAccessControlListSid",
+                  "value": "<IpAccessControlListSid>",
+                  "description": "Path parameter: IpAccessControlListSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Delete a SIP IpAddress**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_addresses.delete`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_access_control_lists.fetch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Fetch a SIP IpAccessControlList**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_access_control_lists.fetch`"
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_access_control_lists.update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Update a SIP IpAccessControlList (partial — only set fields are touched)**\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_access_control_lists.update`",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SIP · sip_ip_access_control_lists.delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:Sid.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                ":AccountSid",
+                "SIP",
+                "IpAccessControlLists",
+                ":Sid.json"
+              ],
+              "variable": [
+                {
+                  "key": "AccountSid",
+                  "value": "{{accountSid}}",
+                  "description": "Path parameter: AccountSid"
+                },
+                {
+                  "key": "Sid",
+                  "value": "<Sid>",
+                  "description": "Path parameter: Sid"
+                }
+              ]
+            },
+            "description": "**Delete a SIP IpAccessControlList**\n\nReturns **204 No Content** on success — no response body.\n\nHTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.\n\nOperationId: `sip_ip_access_control_lists.delete`"
           },
           "response": []
         }

@@ -1,0 +1,25 @@
+meta {
+  name: SIP sip_domain_auth_calls_ip_access_control_list_mappings.fetch
+  type: http
+  seq: 19
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/Domains/:DomainSid/Auth/Calls/IpAccessControlListMappings/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  DomainSid: <DomainSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a call-auth IpAccessControlList mapping on a SIP Domain**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_domain_auth_calls_ip_access_control_list_mappings.fetch`
+}

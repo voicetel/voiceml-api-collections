@@ -1,0 +1,26 @@
+meta {
+  name: SIP sip_ip_access_control_lists.delete
+  type: http
+  seq: 45
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Delete a SIP IpAccessControlList**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_ip_access_control_lists.delete`
+}

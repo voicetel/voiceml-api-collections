@@ -1,0 +1,32 @@
+meta {
+  name: SIP sip_ip_access_control_lists.update
+  type: http
+  seq: 44
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:Sid.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a SIP IpAccessControlList (partial — only set fields are touched)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_ip_access_control_lists.update`
+}

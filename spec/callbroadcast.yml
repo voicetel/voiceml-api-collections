@@ -1,13 +1,17 @@
 openapi: 3.1.0
 info:
   title: VoiceML — Twilio-compatible REST API
-  version: "0.7.0"
-  summary: Outbound voice + AMD service with a Twilio-compatible REST API
+  version: "0.8.0"
+  summary: Twilio-compatible voice (inbound + outbound), SMS, conferencing, recording, transcription, and payment platform
   description: |
-    VoiceML exposes a Twilio-compatible Programmable Voice Calls REST API so
-    existing Twilio SDKs (`twilio-node`, `twilio-python`, `twilio-go`, ...)
-    can integrate with minimal migration effort. Authentication, error codes,
-    and pagination follow Twilio's documented conventions where supported.
+    VoiceML exposes a Twilio-compatible REST + TwiML surface covering
+    voice (inbound + outbound calls, conferences, queues), SMS via the
+    Messages resource, mid-call recording / SIPREC / real-time
+    transcription / `<Pay>` subresources, and the `IncomingPhoneNumbers`
+    + `Applications` configuration surfaces. Existing Twilio SDKs
+    (`twilio-node`, `twilio-python`, `twilio-go`, ...) integrate with
+    minimal migration effort. Authentication, error codes, and
+    pagination follow Twilio's documented conventions where supported.
 
     URL format: Twilio's canonical URL form ends with `.json` (e.g.
     `/Calls/{Sid}.json`). VoiceML accepts BOTH the `.json`-suffixed and
@@ -99,6 +103,43 @@ tags:
     description: |
       The Application resource — create/list/fetch/update/delete.
       Twilio-parity tag.
+  - name: Api20100401SipDomain
+    x-displayName: SIP / Domains
+    description: |
+      The SIP Domain resource — create/list/fetch/update/delete under
+      `/SIP/Domains`. Twilio-parity tag.
+  - name: Api20100401SipCredentialList
+    x-displayName: SIP / CredentialLists
+    description: |
+      The SIP CredentialList resource — create/list/fetch/update/delete
+      under `/SIP/CredentialLists`. Twilio-parity tag.
+  - name: Api20100401SipCredential
+    x-displayName: SIP / CredentialLists / Credentials
+    description: |
+      SIP Credentials scoped to a parent CredentialList —
+      create/list/fetch/update/delete under
+      `/SIP/CredentialLists/{CredentialListSid}/Credentials`. The `password` is
+      write-only (accepted on create/update, never echoed). Twilio-
+      parity tag.
+  - name: Api20100401SipIpAccessControlList
+    x-displayName: SIP / IpAccessControlLists
+    description: |
+      The SIP IpAccessControlList resource — create/list/fetch/update/
+      delete under `/SIP/IpAccessControlLists`. Twilio-parity tag.
+  - name: Api20100401SipIpAddress
+    x-displayName: SIP / IpAccessControlLists / IpAddresses
+    description: |
+      SIP IpAddresses scoped to a parent IpAccessControlList —
+      create/list/fetch/update/delete under
+      `/SIP/IpAccessControlLists/{IpAccessControlListSid}/IpAddresses`. Twilio-parity tag.
+  - name: Api20100401SipDomainMapping
+    x-displayName: SIP / Domains / Mappings
+    description: |
+      SIP Domain-to-list mappings — the CredentialListMapping,
+      IpAccessControlListMapping, and per-direction Auth/Calls +
+      Auth/Registrations mapping surfaces under `/SIP/Domains/{Sid}`.
+      create/list/fetch/delete (no update); the response echoes the
+      mapped list's shape. Twilio-parity tag.
   - name: Api20100401Message
     x-displayName: Messages
     description: |
@@ -142,7 +183,7 @@ tags:
       separately so SDK codegen can choose to skip these or emit them
       under a non-Twilio module.
 
-# Redoc sidebar grouping — mirrors voicetel.com/docs/api/v0.7/voiceml/.
+# Redoc sidebar grouping — mirrors voicetel.com/docs/api/v0.6/voiceml/.
 # Operation tags stay Api20100401* for SDK codegen compatibility.
 x-tagGroups:
   - name: Voice — calls
@@ -167,6 +208,14 @@ x-tagGroups:
   - name: Applications
     tags:
       - Api20100401Application
+  - name: SIP Trunking
+    tags:
+      - Api20100401SipDomain
+      - Api20100401SipCredentialList
+      - Api20100401SipCredential
+      - Api20100401SipIpAccessControlList
+      - Api20100401SipIpAddress
+      - Api20100401SipDomainMapping
   - name: Numbers
     tags:
       - Api20100401IncomingPhoneNumber
@@ -312,6 +361,118 @@ components:
         type: string
         pattern: '^PN[a-f0-9]{32}$|^\+[1-9]\d{1,14}$'
 
+    SipDomainSid:
+      name: Sid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP Domain SID — literal "SD" + 32 hex chars
+        (34 total). Server-generated on `POST /SIP/Domains`.
+      schema:
+        type: string
+        pattern: '^SD[0-9a-f]{32}$'
+
+    SipCredentialListSid:
+      name: Sid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP CredentialList SID — literal "CL" + 32 hex
+        chars (34 total). Server-generated on `POST /SIP/CredentialLists`.
+        Also names the parent list in the Credentials sub-resource path.
+      schema:
+        type: string
+        pattern: '^CL[0-9a-f]{32}$'
+
+    SipCredentialSid:
+      name: Sid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP Credential SID — literal "CR" + 32 hex
+        chars (34 total). Server-generated on
+        `POST /SIP/CredentialLists/{CredentialListSid}/Credentials`.
+      schema:
+        type: string
+        pattern: '^CR[0-9a-f]{32}$'
+
+    SipIpAccessControlListSid:
+      name: Sid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP IpAccessControlList SID — literal "AL" +
+        32 hex chars (34 total). Server-generated on
+        `POST /SIP/IpAccessControlLists`. Also names the parent list in
+        the IpAddresses sub-resource path.
+      schema:
+        type: string
+        pattern: '^AL[0-9a-f]{32}$'
+
+    SipIpAddressSid:
+      name: Sid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP IpAddress SID — literal "IP" + 32 hex
+        chars (34 total). Server-generated on
+        `POST /SIP/IpAccessControlLists/{IpAccessControlListSid}/IpAddresses`.
+      schema:
+        type: string
+        pattern: '^IP[0-9a-f]{32}$'
+
+    SipMappingListSid:
+      name: Sid
+      in: path
+      required: true
+      description: |
+        The mapped list's SID on a SIP Domain mapping leaf. A
+        CredentialList mapping carries a `CL…` sid; an
+        IpAccessControlList mapping carries an `AL…` sid. The mapping's
+        own `sid` IS the mapped list's sid (Twilio semantics).
+      schema:
+        type: string
+        pattern: '^(CL|AL)[0-9a-f]{32}$'
+
+    SipParentDomainSid:
+      name: DomainSid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP Domain SID — literal "SD" + 32 hex chars
+        (34 total). Names the parent Domain in a Domain mapping
+        sub-resource path. Matches Twilio's `DomainSid` path-parameter
+        name for the nested mapping surfaces.
+      schema:
+        type: string
+        pattern: '^SD[0-9a-f]{32}$'
+
+    SipParentCredentialListSid:
+      name: CredentialListSid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP CredentialList SID — literal "CL" + 32 hex
+        chars (34 total). Names the parent CredentialList in the
+        Credentials sub-resource path. Matches Twilio's
+        `CredentialListSid` path-parameter name.
+      schema:
+        type: string
+        pattern: '^CL[0-9a-f]{32}$'
+
+    SipParentIpAccessControlListSid:
+      name: IpAccessControlListSid
+      in: path
+      required: true
+      description: |
+        Twilio-compatible SIP IpAccessControlList SID — literal "AL" +
+        32 hex chars (34 total). Names the parent IpAccessControlList in
+        the IpAddresses sub-resource path. Matches Twilio's
+        `IpAccessControlListSid` path-parameter name.
+      schema:
+        type: string
+        pattern: '^AL[0-9a-f]{32}$'
+
     Page:
       name: Page
       in: query
@@ -346,44 +507,47 @@ components:
       type: object
       required: [sid, account_sid, status, direction, api_version, uri, date_created, date_updated]
       properties:
-        sid:                  { type: string, example: "CA1234567890abcdef1234567890abcdef" }
-        account_sid:          { type: string, example: "ACffffffffffffffffffffffffffffffff" }
-        api_version:          { type: string, example: "2010-04-01" }
-        to:                   { type: string, example: "+18005551234" }
-        to_formatted:         { type: string, description: "Human-readable national formatting of `to`, e.g. `(800) 555-1234` for US/CA numbers. Generated via libphonenumber; falls back to the E.164 form if parsing fails." }
-        from:                 { type: string, example: "+18005550000" }
-        from_formatted:       { type: string, description: "Human-readable national formatting of `from`. Same generation rules as `to_formatted`." }
-        parent_call_sid:      { type: string, description: "Set on B-leg child calls (e.g. legs created by `<Dial>`). Empty on the originating A-leg or when no `<Dial>`-style bridge has occurred." }
-        caller_name:          { type: string, description: "SIP From: display-name captured on inbound calls (CNAM-style identification). Empty for outbound originates and for inbound calls without a display name." }
-        forwarded_from:       { type: string, description: "Originator of a forwarded inbound call, captured from the SIP `Diversion` (RFC 5806) or `History-Info` (RFC 7044) header. Empty for non-forwarded calls." }
+        sid:                  { nullable: true, type: string, example: "CA1234567890abcdef1234567890abcdef" }
+        account_sid:          { nullable: true, type: string, example: "AC0123456789abcdef0123456789abcdef" }
+        api_version:          { nullable: true, type: string, example: "2010-04-01" }
+        to:                   { nullable: true, type: string, example: "+18005551234" }
+        to_formatted:         { nullable: true, type: string, description: "Human-readable national formatting of `to`, e.g. `(800) 555-1234` for US/CA numbers. Generated via libphonenumber; falls back to the E.164 form if parsing fails." }
+        from:                 { nullable: true, type: string, example: "+18005550000" }
+        from_formatted:       { nullable: true, type: string, description: "Human-readable national formatting of `from`. Same generation rules as `to_formatted`." }
+        parent_call_sid:      { nullable: true, type: string, description: "Set on B-leg child calls (e.g. legs created by `<Dial>`). Empty on the originating A-leg or when no `<Dial>`-style bridge has occurred." }
+        caller_name:          { nullable: true, type: string, description: "SIP From: display-name captured on inbound calls (CNAM-style identification). Empty for outbound originates and for inbound calls without a display name." }
+        forwarded_from:       { nullable: true, type: string, description: "Originator of a forwarded inbound call, captured from the SIP `Diversion` (RFC 5806) or `History-Info` (RFC 7044) header. Empty for non-forwarded calls." }
         status:
           type: string
           enum: [queued, ringing, in-progress, completed, busy, no-answer, canceled, failed]
         direction:
           type: string
+          nullable: true
           enum: [inbound, outbound-api, outbound-dial]
         answered_by:
           type: string
+          nullable: true
           description: |
             AMD verdict. Wire-strict Twilio enum, suitable for
             strict-mode SDK deserialisers.
           enum: [human, machine_start, machine_end_beep, machine_end_silence,
                  machine_end_other, fax, unknown, ""]
-        start_time:           { type: string, format: date-time-rfc-2822 }
-        end_time:             { type: string, format: date-time-rfc-2822 }
-        duration:             { type: string, description: "Seconds, as decimal string." }
-        price:                { type: string, description: "Twilio compatibility — always empty (VoiceML does not bill per-call)." }
-        price_unit:           { type: string, description: "Twilio compatibility — always empty." }
-        phone_number_sid:     { type: string, description: "Twilio compatibility — always empty." }
+        start_time:           { nullable: true, type: string, format: date-time-rfc-2822 }
+        end_time:             { nullable: true, type: string, format: date-time-rfc-2822 }
+        duration:             { nullable: true, type: string, description: "Seconds, as decimal string." }
+        price:                { nullable: true, type: string, description: "Twilio compatibility — always empty (VoiceML does not bill per-call)." }
+        price_unit:           { nullable: true, type: string, description: "Twilio compatibility — always empty." }
+        phone_number_sid:     { nullable: true, type: string, description: "Twilio compatibility — always empty." }
         annotation:           { type: string, description: "Twilio compatibility — always empty." }
-        group_sid:            { type: string, description: "Twilio compatibility — always empty." }
-        queue_time:           { type: string, description: "Seconds spent in `<Enqueue>` queue, as decimal string. Empty for non-queued calls." }
-        trunk_sid:            { type: string, description: "Twilio compatibility — always empty." }
-        date_created:         { type: string, format: date-time-rfc-2822 }
-        date_updated:         { type: string, format: date-time-rfc-2822 }
-        uri:                  { type: string }
+        group_sid:            { nullable: true, type: string, description: "Twilio compatibility — always empty." }
+        queue_time:           { nullable: true, type: string, description: "Seconds spent in `<Enqueue>` queue, as decimal string. Empty for non-queued calls." }
+        trunk_sid:            { nullable: true, type: string, description: "Twilio compatibility — always empty." }
+        date_created:         { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:         { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:                  { nullable: true, type: string }
         subresource_uris:
           type: object
+          nullable: true
           additionalProperties: { type: string }
 
     CallList:
@@ -404,9 +568,9 @@ components:
       type: object
       required: [sid, account_sid, friendly_name, status, api_version, uri]
       properties:
-        sid:           { type: string, pattern: '^CF[a-f0-9]{32}$', example: "CF1234567890abcdef1234567890abcdef" }
-        account_sid:   { type: string }
-        friendly_name: { type: string, example: "incident-42" }
+        sid:           { nullable: true, type: string, pattern: '^CF[a-f0-9]{32}$', example: "CF1234567890abcdef1234567890abcdef" }
+        account_sid:   { nullable: true, type: string }
+        friendly_name: { nullable: true, type: string, example: "incident-42" }
         status:
           type: string
           enum: [init, in-progress, completed]
@@ -417,15 +581,16 @@ components:
             enum-deserializer compatibility.
         region:
           type: string
+          nullable: true
           description: |
             Twilio edge region label. Defaults to `us1`; reserved
             for operator-overridable region taxonomy in a future
             release. Informational — VoiceML does not route
             by region today.
-        api_version:   { type: string }
-        uri:           { type: string }
-        date_created:  { type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked (room state is queried live; creation timestamps are not persisted)." }
-        date_updated:  { type: string, format: date-time-rfc-2822, description: "Same caveat as `date_created`." }
+        api_version:   { nullable: true, type: string }
+        uri:           { nullable: true, type: string }
+        date_created:  { nullable: true, type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked (room state is queried live; creation timestamps are not persisted)." }
+        date_updated:  { nullable: true, type: string, format: date-time-rfc-2822, description: "Same caveat as `date_created`." }
         reason_conference_ended:
           type: string
           enum: [conference-ended-via-api, last-participant-kicked, last-participant-left, participant-with-end-conference-on-exit-kicked, participant-with-end-conference-on-exit-left, ""]
@@ -435,9 +600,11 @@ components:
             `Status=completed` POST. Empty while in-progress.
         call_sid_ending_conference:
           type: string
+          nullable: true
           description: "Populated only when a participant left with `endConferenceOnExit=true`; empty otherwise."
         subresource_uris:
           type: object
+          nullable: true
           additionalProperties: { type: string }
           description: "Map of `participants` and `recordings` URIs — Twilio-compatible."
         member_count:
@@ -462,19 +629,21 @@ components:
       type: object
       required: [call_sid, conference_sid, account_sid, muted, hold, coaching, queue_time, status, start_conference_on_enter, end_conference_on_exit, api_version, uri]
       properties:
-        call_sid:        { type: string, example: "CA0123456789abcdef0123456789abcdef" }
-        conference_sid:  { type: string }
-        account_sid:     { type: string }
-        muted:           { type: boolean }
-        hold:            { type: boolean }
+        call_sid:        { nullable: true, type: string, example: "CA0123456789abcdef0123456789abcdef" }
+        conference_sid:  { nullable: true, type: string }
+        account_sid:     { nullable: true, type: string }
+        muted:           { nullable: true, type: boolean }
+        hold:            { nullable: true, type: boolean }
         call_sid_to_coach:
           type: string
+          nullable: true
           description: |
             When `coaching` is true, the CallSid of the participant this
             coach can speak to (Twilio whisper-coach). Empty when
             `coaching` is false or the coach target has not joined.
         coaching:
           type: boolean
+          nullable: true
           description: |
             True when this participant joined with the `coach` role
             (Twilio whisper-coach pattern). A coach hears the entire
@@ -482,16 +651,19 @@ components:
             identified by `call_sid_to_coach`.
         queue_time:
           type: string
+          nullable: true
           description: |
             Pre-join queue-wait in seconds, string-encoded per
             Twilio's wire shape. "0" when the participant did not
             transit a queue (the common case). Populated from
-            `<Enqueue>` dequeue events via the TwiML executor.
+            `<Enqueue>` dequeue events.
         start_conference_on_enter:
           type: boolean
+          nullable: true
           description: "Reflects the `<Dial><Conference>` attribute used at join time. v0.19.x emits the documented default (`true`) for every participant — per-participant attribute persistence is on the roadmap."
         end_conference_on_exit:
           type: boolean
+          nullable: true
           description: "Reflects the `<Dial><Conference>` attribute used at join time. v0.19.x emits the documented default (`false`) for every participant."
         status:
           type: string
@@ -502,11 +674,11 @@ components:
             the `hold` flag is set, `completed` after they've
             left (visible only briefly via the synthesised
             response when a mute/hold update races a leave).
-        label:           { type: string, description: "Optional tag set via `<Conference participantLabel=…>`. Empty when not set." }
+        label:           { nullable: true, type: string, description: "Optional tag set via `<Conference participantLabel=…>`. Empty when not set." }
         api_version:     { type: string }
-        uri:             { type: string }
-        date_created:    { type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked." }
-        date_updated:    { type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked." }
+        uri:             { nullable: true, type: string }
+        date_created:    { nullable: true, type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked." }
+        date_updated:    { nullable: true, type: string, format: date-time-rfc-2822, description: "Emitted via omitempty when not tracked." }
 
     ParticipantList:
       type: object
@@ -525,17 +697,17 @@ components:
       type: object
       required: [sid, account_sid, friendly_name, current_size, max_size, average_wait_time, date_created, date_updated, uri]
       properties:
-        sid:               { type: string, pattern: '^QU[0-9a-f]{32}$', example: "QU0123456789abcdef0123456789abcdef" }
-        account_sid:       { type: string }
-        friendly_name:     { type: string, example: "support" }
+        sid:               { nullable: true, type: string, pattern: '^QU[0-9a-f]{32}$', example: "QU0123456789abcdef0123456789abcdef" }
+        account_sid:       { nullable: true, type: string }
+        friendly_name:     { nullable: true, type: string, example: "support" }
         current_size:      { type: integer, description: Live count of waiting members. }
         max_size:          { type: integer, default: 0, description: "Capacity ceiling; 0 means unlimited (Twilio default). Further enqueues fail when current_size equals a positive max_size." }
         average_wait_time:
           type: integer
           description: "Seconds in the trailing 5-minute window. 0 when no recent exits."
-        date_created:      { type: string, format: date-time-rfc-2822 }
-        date_updated:      { type: string, format: date-time-rfc-2822 }
-        uri:               { type: string }
+        date_created:      { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:      { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:               { nullable: true, type: string }
 
     QueueList:
       type: object
@@ -557,13 +729,13 @@ components:
       type: object
       required: [call_sid, queue_sid, account_sid, date_enqueued, wait_time, position, uri]
       properties:
-        call_sid:      { type: string, example: "CA0123456789abcdef0123456789abcdef" }
-        queue_sid:     { type: string }
+        call_sid:      { nullable: true, type: string, example: "CA0123456789abcdef0123456789abcdef" }
+        queue_sid:     { nullable: true, type: string }
         account_sid:   { type: string }
-        date_enqueued: { type: string, format: date-time-rfc-2822 }
+        date_enqueued: { nullable: true, type: string, format: date-time-rfc-2822 }
         wait_time:     { type: integer, description: Seconds since enqueue. }
         position:      { type: integer, description: 1-based; 1 = front of queue (longest waiting). }
-        uri:           { type: string }
+        uri:           { nullable: true, type: string }
 
     QueueMemberList:
       type: object
@@ -585,27 +757,243 @@ components:
       type: object
       required: [sid, account_sid, friendly_name, api_version, voice_url, voice_caller_id_lookup, date_created, date_updated, uri]
       properties:
-        sid:                     { type: string, pattern: '^AP[0-9a-f]{32}$', example: "AP0123456789abcdef0123456789abcdef" }
-        account_sid:             { type: string }
-        friendly_name:           { type: string, example: "ivr-main" }
-        api_version:             { type: string }
-        voice_url:               { type: string, description: TwiML URL fetched when <Dial><Application>SID</Application></Dial> dispatches. }
-        voice_method:            { type: string, enum: [GET, POST] }
-        voice_fallback_url:      { type: string, description: Fetched when voice_url returns non-2xx or fails. }
-        voice_fallback_method:   { type: string, enum: [GET, POST] }
-        voice_caller_id_lookup:  { type: boolean }
-        status_callback:         { type: string }
-        status_callback_method:  { type: string, enum: [GET, POST] }
+        sid:                     { nullable: true, type: string, pattern: '^AP[0-9a-f]{32}$', example: "AP0123456789abcdef0123456789abcdef" }
+        account_sid:             { nullable: true, type: string }
+        friendly_name:           { nullable: true, type: string, example: "ivr-main" }
+        api_version:             { nullable: true, type: string }
+        voice_url:               { nullable: true, type: string, description: TwiML URL fetched when <Dial><Application>SID</Application></Dial> dispatches. }
+        voice_method:            { nullable: true, type: string, enum: [GET, POST] }
+        voice_fallback_url:      { nullable: true, type: string, description: Fetched when voice_url returns non-2xx or fails. }
+        voice_fallback_method:   { nullable: true, type: string, enum: [GET, POST] }
+        voice_caller_id_lookup:  { nullable: true, type: boolean }
+        status_callback:         { nullable: true, type: string }
+        status_callback_method:  { nullable: true, type: string, enum: [GET, POST] }
         status_callback_event:   { type: string, description: Comma-separated. }
-        date_created:            { type: string, format: date-time-rfc-2822 }
-        date_updated:            { type: string, format: date-time-rfc-2822 }
-        uri:                     { type: string }
+        date_created:            { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:            { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:                     { nullable: true, type: string }
 
     ApplicationList:
       type: object
       required: [applications, page, page_size, total]
       properties:
         applications:      { type: array, items: { $ref: '#/components/schemas/Application' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
+    SipDomain:
+      type: object
+      required: [sid, account_sid, domain_name, api_version, uri, date_created, date_updated]
+      properties:
+        sid:                          { nullable: true, type: string, pattern: '^SD[0-9a-f]{32}$', example: "SD0123456789abcdef0123456789abcdef" }
+        account_sid:                  { nullable: true, type: string }
+        friendly_name:                { nullable: true, type: string, example: "sip-ingress" }
+        domain_name:                  { nullable: true, type: string, example: "example.sip.voiceml.example.com", description: "Fully-qualified SIP domain. Required on create." }
+        api_version:                  { nullable: true, type: string }
+        auth_type:                    { nullable: true, type: string, description: "Authentication scheme bound to the domain (e.g. via CredentialList / IpAccessControlList mappings). Empty when no auth mapping is attached." }
+        voice_url:                    { nullable: true, type: string, format: uri }
+        voice_method:                 { nullable: true, type: string, format: http-method, enum: [GET, POST] }
+        voice_fallback_url:           { nullable: true, type: string, format: uri }
+        voice_fallback_method:        { nullable: true, type: string, format: http-method, enum: [GET, POST] }
+        voice_status_callback_url:    { nullable: true, type: string, format: uri }
+        voice_status_callback_method: { nullable: true, type: string, format: http-method, enum: [GET, POST] }
+        sip_registration:             { nullable: true, type: boolean }
+        emergency_calling_enabled:    { nullable: true, type: boolean }
+        secure:                       { nullable: true, type: boolean }
+        byoc_trunk_sid:               { nullable: true, type: string }
+        emergency_caller_sid:         { nullable: true, type: string }
+        date_created:                 { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:                 { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:                          { nullable: true, type: string }
+        subresource_uris:
+          type: object
+          nullable: true
+          additionalProperties: { type: string }
+
+    SipDomainList:
+      type: object
+      required: [domains, page, page_size, total]
+      properties:
+        domains:           { type: array, items: { $ref: '#/components/schemas/SipDomain' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
+    SipCredentialList:
+      type: object
+      required: [sid, account_sid, date_created, date_updated, uri]
+      properties:
+        sid:           { nullable: true, type: string, pattern: '^CL[0-9a-f]{32}$', example: "CL0123456789abcdef0123456789abcdef" }
+        account_sid:   { nullable: true, type: string }
+        friendly_name: { nullable: true, type: string, example: "office-handsets" }
+        date_created:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:           { nullable: true, type: string }
+        subresource_uris:
+          type: object
+          nullable: true
+          additionalProperties: { type: string }
+
+    SipCredentialListList:
+      type: object
+      required: [credential_lists, page, page_size, total]
+      properties:
+        credential_lists:  { type: array, items: { $ref: '#/components/schemas/SipCredentialList' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
+    SipCredential:
+      type: object
+      required: [sid, account_sid, credential_list_sid, username, date_created, date_updated, uri]
+      # password is write-only: accepted on create/update (see the
+      # request bodies on the Credentials paths) but NEVER echoed in a
+      # response — Twilio's Credential resource omits it too.
+      properties:
+        sid:                 { nullable: true, type: string, pattern: '^CR[0-9a-f]{32}$', example: "CR0123456789abcdef0123456789abcdef" }
+        account_sid:         { nullable: true, type: string }
+        credential_list_sid: { nullable: true, type: string, pattern: '^CL[0-9a-f]{32}$' }
+        username:            { nullable: true, type: string, example: "alice" }
+        date_created:        { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:        { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:                 { nullable: true, type: string }
+
+    SipCredentialListPage:
+      type: object
+      required: [credentials, page, page_size, total]
+      properties:
+        credentials:       { type: array, items: { $ref: '#/components/schemas/SipCredential' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
+    SipIpAccessControlList:
+      type: object
+      required: [sid, account_sid, date_created, date_updated, uri]
+      properties:
+        sid:           { nullable: true, type: string, pattern: '^AL[0-9a-f]{32}$', example: "AL0123456789abcdef0123456789abcdef" }
+        account_sid:   { nullable: true, type: string }
+        friendly_name: { nullable: true, type: string, example: "carrier-allowlist" }
+        date_created:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:           { nullable: true, type: string }
+        subresource_uris:
+          type: object
+          nullable: true
+          additionalProperties: { type: string }
+
+    SipIpAccessControlListList:
+      type: object
+      required: [ip_access_control_lists, page, page_size, total]
+      properties:
+        ip_access_control_lists: { type: array, items: { $ref: '#/components/schemas/SipIpAccessControlList' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
+    SipIpAddress:
+      type: object
+      required: [sid, account_sid, ip_access_control_list_sid, friendly_name, ip_address, cidr_prefix_length, date_created, date_updated, uri]
+      properties:
+        sid:                        { nullable: true, type: string, pattern: '^IP[0-9a-f]{32}$', example: "IP0123456789abcdef0123456789abcdef" }
+        account_sid:                { nullable: true, type: string }
+        ip_access_control_list_sid: { nullable: true, type: string, pattern: '^AL[0-9a-f]{32}$' }
+        friendly_name:              { nullable: true, type: string, example: "carrier-edge-1" }
+        ip_address:                 { nullable: true, type: string, example: "203.0.113.10" }
+        cidr_prefix_length:         { type: integer, example: 32, description: "CIDR prefix length. Defaults to 32 (single host) when omitted on create." }
+        date_created:               { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:               { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:                        { nullable: true, type: string }
+
+    SipIpAddressList:
+      type: object
+      required: [ip_addresses, page, page_size, total]
+      properties:
+        ip_addresses:      { type: array, items: { $ref: '#/components/schemas/SipIpAddress' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
+    SipDomainMapping:
+      type: object
+      required: [sid, account_sid, date_created, date_updated, uri]
+      # The mapping echoes the MAPPED list: `sid` IS the mapped list's
+      # sid (CL… for CredentialList mappings, AL… for
+      # IpAccessControlList mappings) and friendly_name / dates come
+      # from that list. URI points at the mapping leaf under the domain.
+      properties:
+        sid:           { nullable: true, type: string, pattern: '^(CL|AL)[0-9a-f]{32}$', example: "CL0123456789abcdef0123456789abcdef" }
+        account_sid:   { nullable: true, type: string }
+        friendly_name: { nullable: true, type: string }
+        domain_sid:    { nullable: true, type: string, pattern: '^SD[0-9a-f]{32}$', description: "The SipDomain resource this mapping is attached to." }
+        date_created:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        uri:           { nullable: true, type: string }
+
+    SipCredentialListMappingList:
+      type: object
+      required: [credential_list_mappings, page, page_size, total]
+      properties:
+        credential_list_mappings: { type: array, items: { $ref: '#/components/schemas/SipDomainMapping' } }
+        page:              { type: integer }
+        page_size:         { type: integer }
+        num_pages:         { type: integer }
+        total:             { type: integer }
+        start:             { type: integer }
+        end:               { type: integer }
+        first_page_uri:    { type: string }
+        next_page_uri:     { type: [string, "null"] }
+        previous_page_uri: { type: [string, "null"] }
+        uri:               { type: string }
+
+    SipIpAccessControlListMappingList:
+      type: object
+      required: [ip_access_control_list_mappings, page, page_size, total]
+      properties:
+        ip_access_control_list_mappings: { type: array, items: { $ref: '#/components/schemas/SipDomainMapping' } }
         page:              { type: integer }
         page_size:         { type: integer }
         num_pages:         { type: integer }
@@ -666,11 +1054,12 @@ components:
       type: object
       required: [sid, account_sid, call_sid, status]
       properties:
-        sid:           { type: string, example: "RE1234567890abcdef1234567890abcdef" }
-        account_sid:   { type: string }
-        call_sid:      { type: string }
+        sid:           { nullable: true, type: string, example: "RE1234567890abcdef1234567890abcdef" }
+        account_sid:   { nullable: true, type: string }
+        call_sid:      { nullable: true, type: string }
         conference_sid:
           type: string
+          nullable: true
           description: Set only on conference-room captures (`<Dial><Conference record="record-from-start">`); empty on per-leg recordings.
         status:
           type: string
@@ -683,25 +1072,28 @@ components:
         source:
           type: string
           enum: [OutboundAPI, RecordVerb, DialVerb, Conference, Trunking, StartCallRecordingAPI, StartConferenceRecordingAPI]
-        channels:      { type: integer, minimum: 1, maximum: 2 }
-        duration:      { type: string }
-        api_version:   { type: string }
-        uri:           { type: string }
-        date_created:  { type: string, format: date-time-rfc-2822 }
-        date_updated:  { type: string, format: date-time-rfc-2822 }
-        start_time:    { type: string, format: date-time-rfc-2822 }
-        price:         { type: string, description: "Reserved; VoiceML emits empty." }
-        price_unit:    { type: string, description: "Reserved; VoiceML emits empty." }
+        channels:      { nullable: true, type: integer, minimum: 1, maximum: 2 }
+        duration:      { nullable: true, type: string }
+        api_version:   { nullable: true, type: string }
+        uri:           { nullable: true, type: string }
+        date_created:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:  { nullable: true, type: string, format: date-time-rfc-2822 }
+        start_time:    { nullable: true, type: string, format: date-time-rfc-2822 }
+        price:         { nullable: true, type: string, description: "Reserved; VoiceML emits empty." }
+        price_unit:    { nullable: true, type: string, description: "Reserved; VoiceML emits empty." }
         encryption_details:
           type: object
+          nullable: true
           additionalProperties: true
           description: Reserved for SSE-KMS metadata when encryption details are exposed; currently empty.
         subresource_uris:
           type: object
+          nullable: true
           additionalProperties: true
           description: Twilio-compat subresource map (currently empty).
         media_url:
           type: string
+          nullable: true
           description: |
             Twilio-compatible URL for the recording audio.
             VoiceML serves the WAV at `/Accounts/{AccountSid}/Recordings/{Sid}.wav`
@@ -756,16 +1148,17 @@ components:
         Customer code that reads e.g. `number.capabilities.voice`
         therefore works with the same SDK patterns on VoiceML and Twilio.
       properties:
-        sid:                       { type: string, pattern: '^PN[a-f0-9]{32}$', example: "PN0123456789abcdef0123456789abcdef" }
-        account_sid:               { type: string, pattern: '^AC[0-9a-f]{32}$' }
-        phone_number:              { type: string, description: "E.164 — leading `+`, 7-15 digits.", example: "+18005551234" }
-        friendly_name:             { type: string, description: "Display name. Empty by default in v0.5.x; tenant-editable via POST in a future release." }
-        api_version:               { type: string, example: "2010-04-01" }
-        uri:                       { type: string, description: "Path under `/2010-04-01/Accounts/{AccountSid}/IncomingPhoneNumbers/{Sid}.json` — uses the canonical PN sid form." }
-        origin:                    { type: string, enum: [twilio, hosted, ""], description: "Twilio-compatible: source of the number. VoiceML emits empty (provisioning model is operator-managed, not number-buy)." }
-        beta:                      { type: boolean, description: "Twilio-compatible: `true` for numbers from beta-availability inventory. VoiceML always emits `false`." }
+        sid:                       { nullable: true, type: string, pattern: '^PN[a-f0-9]{32}$', example: "PN0123456789abcdef0123456789abcdef" }
+        account_sid:               { nullable: true, type: string, pattern: '^AC[0-9a-f]{32}$' }
+        phone_number:              { nullable: true, type: string, description: "E.164 — leading `+`, 7-15 digits.", example: "+18005551234" }
+        friendly_name:             { nullable: true, type: string, description: "Display name. Empty by default in v0.5.x; tenant-editable via POST in a future release." }
+        api_version:               { nullable: true, type: string, example: "2010-04-01" }
+        uri:                       { nullable: true, type: string, description: "Path under `/2010-04-01/Accounts/{AccountSid}/IncomingPhoneNumbers/{Sid}.json` — uses the canonical PN sid form." }
+        origin:                    { nullable: true, type: string, enum: [twilio, hosted, ""], description: "Twilio-compatible: source of the number. VoiceML emits empty (provisioning model is operator-managed, not number-buy)." }
+        beta:                      { nullable: true, type: boolean, description: "Twilio-compatible: `true` for numbers from beta-availability inventory. VoiceML always emits `false`." }
         capabilities:
           type: object
+          nullable: true
           required: [voice, sms, mms, fax]
           description: "Twilio-compatible: which channel types this DID supports. VoiceML is voice-only — `voice=true`, the rest `false`."
           properties:
@@ -773,32 +1166,32 @@ components:
             sms:   { type: boolean }
             mms:   { type: boolean }
             fax:   { type: boolean }
-        voice_url:                 { type: string }
-        voice_method:              { type: string, enum: [GET, POST] }
-        voice_fallback_url:        { type: string }
-        voice_fallback_method:     { type: string, enum: [GET, POST] }
-        voice_application_sid:     { type: string, description: "Twilio-compatible: linked `AP…` Application sid that supplies voice_url. VoiceML's `<Dial><Application>` flow keeps the link on the Application resource, not here — emits empty." }
-        voice_caller_id_lookup:    { type: boolean, description: "Twilio-compatible: CNAM lookup flag. VoiceML doesn't perform CNAM — always `false`." }
+        voice_url:                 { nullable: true, type: string }
+        voice_method:              { nullable: true, type: string, enum: [GET, POST] }
+        voice_fallback_url:        { nullable: true, type: string }
+        voice_fallback_method:     { nullable: true, type: string, enum: [GET, POST] }
+        voice_application_sid:     { nullable: true, type: string, description: "Twilio-compatible: linked `AP…` Application sid that supplies voice_url. VoiceML's `<Dial><Application>` flow keeps the link on the Application resource, not here — emits empty." }
+        voice_caller_id_lookup:    { nullable: true, type: boolean, description: "Twilio-compatible: CNAM lookup flag. VoiceML doesn't perform CNAM — always `false`." }
         voice_receive_mode:        { type: string, enum: [voice, fax], description: "Twilio-compatible: VoiceML routes inbound as voice only — always `voice`." }
-        sms_url:                   { type: string, description: "Twilio-compatible: SMS handler URL. VoiceML is voice-only — empty." }
-        sms_method:                { type: string, enum: [GET, POST, ""], description: "Twilio-compatible: empty (SMS not handled)." }
-        sms_fallback_url:          { type: string, description: "Twilio-compatible: empty (SMS not handled)." }
-        sms_fallback_method:       { type: string, enum: [GET, POST, ""], description: "Twilio-compatible: empty (SMS not handled)." }
-        sms_application_sid:       { type: string, description: "Twilio-compatible: empty (SMS not handled)." }
-        status_callback:           { type: string, description: "Twilio-compatible: lifecycle webhook. VoiceML emits empty (status is per-call via Call status_callback)." }
-        status_callback_method:    { type: string, enum: [GET, POST, ""], description: "Twilio-compatible: empty." }
-        trunk_sid:                 { type: string, description: "Twilio-compatible: SIP trunk routing. VoiceML uses gateway-config-driven trunking — emits empty." }
-        address_sid:               { type: string, description: "Twilio-compatible: regulatory street-address resource. Not tracked by VoiceML — empty." }
+        sms_url:                   { nullable: true, type: string, description: "Twilio-compatible: SMS handler URL. VoiceML is voice-only — empty." }
+        sms_method:                { nullable: true, type: string, enum: [GET, POST, ""], description: "Twilio-compatible: empty (SMS not handled)." }
+        sms_fallback_url:          { nullable: true, type: string, description: "Twilio-compatible: empty (SMS not handled)." }
+        sms_fallback_method:       { nullable: true, type: string, enum: [GET, POST, ""], description: "Twilio-compatible: empty (SMS not handled)." }
+        sms_application_sid:       { nullable: true, type: string, description: "Twilio-compatible: empty (SMS not handled)." }
+        status_callback:           { nullable: true, type: string, description: "Twilio-compatible: lifecycle webhook. VoiceML emits empty (status is per-call via Call status_callback)." }
+        status_callback_method:    { nullable: true, type: string, enum: [GET, POST, ""], description: "Twilio-compatible: empty." }
+        trunk_sid:                 { nullable: true, type: string, description: "Twilio-compatible: SIP trunk routing. VoiceML uses gateway-config-driven trunking — emits empty." }
+        address_sid:               { nullable: true, type: string, description: "Twilio-compatible: regulatory street-address resource. Not tracked by VoiceML — empty." }
         address_requirements:      { type: string, enum: [none, any, local, foreign, ""], description: "Twilio-compatible: address requirement class. VoiceML emits `none`." }
-        identity_sid:              { type: string, description: "Twilio-compatible: business-identity resource. Not tracked — empty." }
-        bundle_sid:                { type: string, description: "Twilio-compatible: regulatory bundle. Not tracked — empty." }
+        identity_sid:              { nullable: true, type: string, description: "Twilio-compatible: business-identity resource. Not tracked — empty." }
+        bundle_sid:                { nullable: true, type: string, description: "Twilio-compatible: regulatory bundle. Not tracked — empty." }
         emergency_status:          { type: string, enum: [Active, Inactive, ""], description: "Twilio-compatible: E911 registration. Not handled by VoiceML — emits empty." }
-        emergency_address_sid:     { type: string, description: "Twilio-compatible: E911 address resource. Not tracked — empty." }
+        emergency_address_sid:     { nullable: true, type: string, description: "Twilio-compatible: E911 address resource. Not tracked — empty." }
         emergency_address_status:  { type: string, enum: [registered, unregistered, pending-registration, registration-failure, pending-unregistration, unregistration-failure, ""], description: "Twilio-compatible: E911 registration state. Not tracked — empty." }
-        status:                    { type: string, description: "Twilio-compatible: provisioning status (`in-use`, etc.). VoiceML doesn't model this — empty." }
-        type:                      { type: string, enum: [local, mobile, "toll-free", ""], description: "Twilio-compatible: number class. VoiceML doesn't categorize numbers this way — emits empty." }
-        date_created:              { type: string, format: date-time-rfc-2822 }
-        date_updated:              { type: string, format: date-time-rfc-2822 }
+        status:                    { nullable: true, type: string, description: "Twilio-compatible: provisioning status (`in-use`, etc.). VoiceML doesn't model this — empty." }
+        type:                      { nullable: true, type: string, enum: [local, mobile, "toll-free", ""], description: "Twilio-compatible: number class. VoiceML doesn't categorize numbers this way — emits empty." }
+        date_created:              { nullable: true, type: string, format: date-time-rfc-2822 }
+        date_updated:              { nullable: true, type: string, format: date-time-rfc-2822 }
 
     IncomingPhoneNumberList:
       type: object
@@ -820,32 +1213,32 @@ components:
       type: object
       required: [sid, account_sid, call_sid, status, api_version, uri]
       properties:
-        sid:          { type: string, pattern: '^MZ[a-f0-9]{32}$', example: "MZ1234567890abcdef1234567890abcdef" }
-        account_sid:  { type: string }
-        call_sid:     { type: string }
-        name:         { type: string, description: "Operator-supplied label for the stream; round-trips on the resource." }
+        sid:          { nullable: true, type: string, pattern: '^MZ[a-f0-9]{32}$', example: "MZ1234567890abcdef1234567890abcdef" }
+        account_sid:  { nullable: true, type: string }
+        call_sid:     { nullable: true, type: string }
+        name:         { nullable: true, type: string, description: "Operator-supplied label for the stream; round-trips on the resource." }
         status:
           type: string
           enum: [in-progress, stopped]
         date_created: { type: string, description: "Set on start; preserved across update." }
-        date_updated: { type: string }
-        uri:          { type: string }
+        date_updated: { nullable: true, type: string }
+        uri:          { nullable: true, type: string }
 
     SiprecSession:
       type: object
       required: [sid, account_sid, call_sid, status, api_version, uri]
       properties:
-        sid:            { type: string, pattern: '^SR[a-f0-9]{32}$', example: "SR1234567890abcdef1234567890abcdef" }
-        account_sid:    { type: string }
-        call_sid:       { type: string }
-        name:           { type: string }
+        sid:            { nullable: true, type: string, pattern: '^SR[a-f0-9]{32}$', example: "SR1234567890abcdef1234567890abcdef" }
+        account_sid:    { nullable: true, type: string }
+        call_sid:       { nullable: true, type: string }
+        name:           { nullable: true, type: string }
         connector_name: { type: string, description: "SIPREC profile name. Falls back to the configured default when empty." }
         status:
           type: string
           enum: [in-progress, stopped]
         date_created:   { type: string }
-        date_updated:   { type: string }
-        uri:            { type: string }
+        date_updated:   { nullable: true, type: string }
+        uri:            { nullable: true, type: string }
 
     CallPayment:
       type: object
@@ -859,7 +1252,7 @@ components:
         surfaced as a VoiceML extension on top of Twilio's response
         schema.
       properties:
-        sid:          { type: string, pattern: '^PY[a-f0-9]{32}$', example: "PY1234567890abcdef1234567890abcdef" }
+        sid:          { type: string, pattern: '^PK[a-f0-9]{32}$', example: "PK1234567890abcdef1234567890abcdef" }
         account_sid:  { type: string }
         call_sid:     { type: string }
         api_version:  { type: string, example: "2010-04-01" }
@@ -876,18 +1269,18 @@ components:
         transcription resource — events are streamed via the
         StatusCallback URL while the call is live.
       properties:
-        sid:                  { type: string, pattern: '^RT[a-f0-9]{32}$', example: "RT1234567890abcdef1234567890abcdef" }
-        account_sid:          { type: string }
-        call_sid:             { type: string }
-        name:                 { type: string }
+        sid:                  { nullable: true, type: string, pattern: '^GT[a-f0-9]{32}$', example: "GT1234567890abcdef1234567890abcdef" }
+        account_sid:          { nullable: true, type: string }
+        call_sid:             { nullable: true, type: string }
+        name:                 { nullable: true, type: string }
         language_code:        { type: string, default: "en-US" }
         transcription_engine: { type: string, enum: [deepgram, google, aws, azure] }
         status:
           type: string
           enum: [in-progress, stopped]
         date_created:         { type: string }
-        date_updated:         { type: string }
-        uri:                  { type: string }
+        date_updated:         { nullable: true, type: string }
+        uri:                  { nullable: true, type: string }
 
     Error:
       type: object
@@ -905,7 +1298,7 @@ components:
         check:
           type: string
           example: "memdb"
-          description: Identifier of the tripped check (memdb / cluster / disk / cpu_load / memory / freeswitch / freeswitch_workload).
+          description: Identifier of the tripped check.
         detail:
           type: string
           example: "memdb ping: connection refused"
@@ -1767,6 +2160,896 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+    post:
+      operationId: sip_domains.create
+      tags: [Api20100401SipDomain]
+      summary: Create a SIP Domain
+      description: |
+        Registers a SIP Domain — the SIP-ingress surface that routes
+        inbound INVITEs to TwiML via `voice_url`. `DomainName` is
+        required.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [DomainName]
+              properties:
+                DomainName:                { type: string }
+                FriendlyName:              { type: string }
+                VoiceUrl:                  { type: string, format: uri }
+                VoiceMethod:               { type: string, enum: [GET, POST] }
+                VoiceFallbackUrl:          { type: string, format: uri }
+                VoiceFallbackMethod:       { type: string, enum: [GET, POST] }
+                VoiceStatusCallbackUrl:    { type: string, format: uri }
+                VoiceStatusCallbackMethod: { type: string, enum: [GET, POST] }
+                SipRegistration:           { type: boolean }
+                Secure:                    { type: boolean }
+                EmergencyCallingEnabled:   { type: boolean }
+                ByocTrunkSid:              { type: string }
+                EmergencyCallerSid:        { type: string }
+      responses:
+        '201':
+          description: SIP Domain resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomain' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '503':
+          description: SIP Domains subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_domains.list
+      tags: [Api20100401SipDomain]
+      summary: List SIP Domains for the account (paged)
+      parameters:
+        - { name: FriendlyName, in: query, schema: { type: string }, description: "Filter to SIP Domains with this exact FriendlyName." }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of SIP Domains.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipDomainSid'
+    get:
+      operationId: sip_domains.fetch
+      tags: [Api20100401SipDomain]
+      summary: Fetch a SIP Domain
+      responses:
+        '200':
+          description: SIP Domain resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomain' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: sip_domains.update
+      tags: [Api20100401SipDomain]
+      summary: Update a SIP Domain (partial — only set fields are touched)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                FriendlyName:              { type: string }
+                VoiceUrl:                  { type: string, format: uri }
+                VoiceMethod:               { type: string, enum: [GET, POST] }
+                VoiceFallbackUrl:          { type: string, format: uri }
+                VoiceFallbackMethod:       { type: string, enum: [GET, POST] }
+                VoiceStatusCallbackUrl:    { type: string, format: uri }
+                VoiceStatusCallbackMethod: { type: string, enum: [GET, POST] }
+                SipRegistration:           { type: boolean }
+                Secure:                    { type: boolean }
+                EmergencyCallingEnabled:   { type: boolean }
+                ByocTrunkSid:              { type: string }
+                EmergencyCallerSid:        { type: string }
+      responses:
+        '200':
+          description: SIP Domain resource (post-mutation state).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomain' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_domains.delete
+      tags: [Api20100401SipDomain]
+      summary: Delete a SIP Domain
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/CredentialLists.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+    post:
+      operationId: sip_credential_lists.create
+      tags: [Api20100401SipCredentialList]
+      summary: Create a SIP CredentialList
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                FriendlyName: { type: string }
+      responses:
+        '201':
+          description: SIP CredentialList resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialList' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '503':
+          description: SIP CredentialLists subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_credential_lists.list
+      tags: [Api20100401SipCredentialList]
+      summary: List SIP CredentialLists for the account (paged)
+      parameters:
+        - { name: FriendlyName, in: query, schema: { type: string }, description: "Filter to CredentialLists with this exact FriendlyName." }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of SIP CredentialLists.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialListList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/CredentialLists/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipCredentialListSid'
+    get:
+      operationId: sip_credential_lists.fetch
+      tags: [Api20100401SipCredentialList]
+      summary: Fetch a SIP CredentialList
+      responses:
+        '200':
+          description: SIP CredentialList resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: sip_credential_lists.update
+      tags: [Api20100401SipCredentialList]
+      summary: Update a SIP CredentialList (partial — only set fields are touched)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                FriendlyName: { type: string }
+      responses:
+        '200':
+          description: SIP CredentialList resource (post-mutation state).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialList' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_credential_lists.delete
+      tags: [Api20100401SipCredentialList]
+      summary: Delete a SIP CredentialList
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/CredentialLists/{CredentialListSid}/Credentials.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentCredentialListSid'
+    post:
+      operationId: sip_credentials.create
+      tags: [Api20100401SipCredential]
+      summary: Create a SIP Credential under a CredentialList
+      description: |
+        `Username` and `Password` are both required. `Password` is
+        write-only — it is accepted here but never echoed back on any
+        response.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [Username, Password]
+              properties:
+                Username: { type: string }
+                Password: { type: string, description: "Write-only — never returned on any response." }
+      responses:
+        '201':
+          description: SIP Credential resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredential' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP Credentials subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_credentials.list
+      tags: [Api20100401SipCredential]
+      summary: List SIP Credentials under a CredentialList (paged)
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of SIP Credentials.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialListPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/CredentialLists/{CredentialListSid}/Credentials/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentCredentialListSid'
+      - $ref: '#/components/parameters/SipCredentialSid'
+    get:
+      operationId: sip_credentials.fetch
+      tags: [Api20100401SipCredential]
+      summary: Fetch a SIP Credential
+      responses:
+        '200':
+          description: SIP Credential resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredential' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: sip_credentials.update
+      tags: [Api20100401SipCredential]
+      summary: Update a SIP Credential (rotate Password; Username is immutable)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                Password: { type: string, description: "Write-only — never returned on any response." }
+      responses:
+        '200':
+          description: SIP Credential resource (post-mutation state).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredential' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_credentials.delete
+      tags: [Api20100401SipCredential]
+      summary: Delete a SIP Credential
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/IpAccessControlLists.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+    post:
+      operationId: sip_ip_access_control_lists.create
+      tags: [Api20100401SipIpAccessControlList]
+      summary: Create a SIP IpAccessControlList
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                FriendlyName: { type: string }
+      responses:
+        '201':
+          description: SIP IpAccessControlList resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAccessControlList' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '503':
+          description: SIP IpAccessControlLists subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_ip_access_control_lists.list
+      tags: [Api20100401SipIpAccessControlList]
+      summary: List SIP IpAccessControlLists for the account (paged)
+      parameters:
+        - { name: FriendlyName, in: query, schema: { type: string }, description: "Filter to IpAccessControlLists with this exact FriendlyName." }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of SIP IpAccessControlLists.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAccessControlListList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/IpAccessControlLists/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipIpAccessControlListSid'
+    get:
+      operationId: sip_ip_access_control_lists.fetch
+      tags: [Api20100401SipIpAccessControlList]
+      summary: Fetch a SIP IpAccessControlList
+      responses:
+        '200':
+          description: SIP IpAccessControlList resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAccessControlList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: sip_ip_access_control_lists.update
+      tags: [Api20100401SipIpAccessControlList]
+      summary: Update a SIP IpAccessControlList (partial — only set fields are touched)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                FriendlyName: { type: string }
+      responses:
+        '200':
+          description: SIP IpAccessControlList resource (post-mutation state).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAccessControlList' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_ip_access_control_lists.delete
+      tags: [Api20100401SipIpAccessControlList]
+      summary: Delete a SIP IpAccessControlList
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/IpAccessControlLists/{IpAccessControlListSid}/IpAddresses.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentIpAccessControlListSid'
+    post:
+      operationId: sip_ip_addresses.create
+      tags: [Api20100401SipIpAddress]
+      summary: Create a SIP IpAddress under an IpAccessControlList
+      description: |
+        `FriendlyName` and `IpAddress` are both required.
+        `CidrPrefixLength` defaults to 32 (single host) when omitted.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [FriendlyName, IpAddress]
+              properties:
+                FriendlyName:     { type: string }
+                IpAddress:        { type: string }
+                CidrPrefixLength: { type: integer }
+      responses:
+        '201':
+          description: SIP IpAddress resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAddress' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '503':
+          description: SIP IpAddresses subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_ip_addresses.list
+      tags: [Api20100401SipIpAddress]
+      summary: List SIP IpAddresses under an IpAccessControlList (paged)
+      parameters:
+        - { name: FriendlyName, in: query, schema: { type: string }, description: "Filter to IpAddresses with this exact FriendlyName." }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of SIP IpAddresses.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAddressList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/IpAccessControlLists/{IpAccessControlListSid}/IpAddresses/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentIpAccessControlListSid'
+      - $ref: '#/components/parameters/SipIpAddressSid'
+    get:
+      operationId: sip_ip_addresses.fetch
+      tags: [Api20100401SipIpAddress]
+      summary: Fetch a SIP IpAddress
+      responses:
+        '200':
+          description: SIP IpAddress resource.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAddress' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: sip_ip_addresses.update
+      tags: [Api20100401SipIpAddress]
+      summary: Update a SIP IpAddress (partial — only set fields are touched)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                FriendlyName:     { type: string }
+                IpAddress:        { type: string }
+                CidrPrefixLength: { type: integer }
+      responses:
+        '200':
+          description: SIP IpAddress resource (post-mutation state).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAddress' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_ip_addresses.delete
+      tags: [Api20100401SipIpAddress]
+      summary: Delete a SIP IpAddress
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/CredentialListMappings.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+    post:
+      operationId: sip_domain_credential_list_mappings.create
+      tags: [Api20100401SipDomainMapping]
+      summary: Map a CredentialList onto a SIP Domain
+      description: |
+        Binds an existing CredentialList (`CL…`) to the Domain. The
+        response echoes the mapped list's shape; the mapping's `sid` IS
+        the CredentialList's sid.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [CredentialListSid]
+              properties:
+                CredentialListSid: { type: string, pattern: '^CL[0-9a-f]{32}$' }
+      responses:
+        '201':
+          description: CredentialList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP Domains subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_domain_credential_list_mappings.list
+      tags: [Api20100401SipDomainMapping]
+      summary: List CredentialList mappings on a SIP Domain (paged)
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of CredentialList mappings.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialListMappingList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/CredentialListMappings/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+      - $ref: '#/components/parameters/SipMappingListSid'
+    get:
+      operationId: sip_domain_credential_list_mappings.fetch
+      tags: [Api20100401SipDomainMapping]
+      summary: Fetch a CredentialList mapping on a SIP Domain
+      responses:
+        '200':
+          description: CredentialList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_domain_credential_list_mappings.delete
+      tags: [Api20100401SipDomainMapping]
+      summary: Unmap a CredentialList from a SIP Domain
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/IpAccessControlListMappings.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+    post:
+      operationId: sip_domain_ip_access_control_list_mappings.create
+      tags: [Api20100401SipDomainMapping]
+      summary: Map an IpAccessControlList onto a SIP Domain
+      description: |
+        Binds an existing IpAccessControlList (`AL…`) to the Domain.
+        The response echoes the mapped list's shape; the mapping's `sid`
+        IS the IpAccessControlList's sid.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [IpAccessControlListSid]
+              properties:
+                IpAccessControlListSid: { type: string, pattern: '^AL[0-9a-f]{32}$' }
+      responses:
+        '201':
+          description: IpAccessControlList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP Domains subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_domain_ip_access_control_list_mappings.list
+      tags: [Api20100401SipDomainMapping]
+      summary: List IpAccessControlList mappings on a SIP Domain (paged)
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of IpAccessControlList mappings.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAccessControlListMappingList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/IpAccessControlListMappings/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+      - $ref: '#/components/parameters/SipMappingListSid'
+    get:
+      operationId: sip_domain_ip_access_control_list_mappings.fetch
+      tags: [Api20100401SipDomainMapping]
+      summary: Fetch an IpAccessControlList mapping on a SIP Domain
+      responses:
+        '200':
+          description: IpAccessControlList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_domain_ip_access_control_list_mappings.delete
+      tags: [Api20100401SipDomainMapping]
+      summary: Unmap an IpAccessControlList from a SIP Domain
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/Auth/Calls/CredentialListMappings.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+    post:
+      operationId: sip_domain_auth_calls_credential_list_mappings.create
+      tags: [Api20100401SipDomainMapping]
+      summary: Map a CredentialList onto a SIP Domain's call authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [CredentialListSid]
+              properties:
+                CredentialListSid: { type: string, pattern: '^CL[0-9a-f]{32}$' }
+      responses:
+        '201':
+          description: Call-auth CredentialList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP Domains subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_domain_auth_calls_credential_list_mappings.list
+      tags: [Api20100401SipDomainMapping]
+      summary: List call-auth CredentialList mappings on a SIP Domain (paged)
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of call-auth CredentialList mappings.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialListMappingList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/Auth/Calls/CredentialListMappings/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+      - $ref: '#/components/parameters/SipMappingListSid'
+    get:
+      operationId: sip_domain_auth_calls_credential_list_mappings.fetch
+      tags: [Api20100401SipDomainMapping]
+      summary: Fetch a call-auth CredentialList mapping on a SIP Domain
+      responses:
+        '200':
+          description: Call-auth CredentialList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_domain_auth_calls_credential_list_mappings.delete
+      tags: [Api20100401SipDomainMapping]
+      summary: Unmap a call-auth CredentialList from a SIP Domain
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/Auth/Calls/IpAccessControlListMappings.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+    post:
+      operationId: sip_domain_auth_calls_ip_access_control_list_mappings.create
+      tags: [Api20100401SipDomainMapping]
+      summary: Map an IpAccessControlList onto a SIP Domain's call authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [IpAccessControlListSid]
+              properties:
+                IpAccessControlListSid: { type: string, pattern: '^AL[0-9a-f]{32}$' }
+      responses:
+        '201':
+          description: Call-auth IpAccessControlList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP Domains subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_domain_auth_calls_ip_access_control_list_mappings.list
+      tags: [Api20100401SipDomainMapping]
+      summary: List call-auth IpAccessControlList mappings on a SIP Domain (paged)
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of call-auth IpAccessControlList mappings.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipIpAccessControlListMappingList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/Auth/Calls/IpAccessControlListMappings/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+      - $ref: '#/components/parameters/SipMappingListSid'
+    get:
+      operationId: sip_domain_auth_calls_ip_access_control_list_mappings.fetch
+      tags: [Api20100401SipDomainMapping]
+      summary: Fetch a call-auth IpAccessControlList mapping on a SIP Domain
+      responses:
+        '200':
+          description: Call-auth IpAccessControlList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_domain_auth_calls_ip_access_control_list_mappings.delete
+      tags: [Api20100401SipDomainMapping]
+      summary: Unmap a call-auth IpAccessControlList from a SIP Domain
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/Auth/Registrations/CredentialListMappings.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+    post:
+      operationId: sip_domain_auth_registrations_credential_list_mappings.create
+      tags: [Api20100401SipDomainMapping]
+      summary: Map a CredentialList onto a SIP Domain's registration authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [CredentialListSid]
+              properties:
+                CredentialListSid: { type: string, pattern: '^CL[0-9a-f]{32}$' }
+      responses:
+        '201':
+          description: Registration-auth CredentialList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503':
+          description: SIP Domains subsystem not configured.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    get:
+      operationId: sip_domain_auth_registrations_credential_list_mappings.list
+      tags: [Api20100401SipDomainMapping]
+      summary: List registration-auth CredentialList mappings on a SIP Domain (paged)
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: Page of registration-auth CredentialList mappings.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipCredentialListMappingList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /2010-04-01/Accounts/{AccountSid}/SIP/Domains/{DomainSid}/Auth/Registrations/CredentialListMappings/{Sid}.json:
+    parameters:
+      - $ref: '#/components/parameters/AccountSid'
+      - $ref: '#/components/parameters/SipParentDomainSid'
+      - $ref: '#/components/parameters/SipMappingListSid'
+    get:
+      operationId: sip_domain_auth_registrations_credential_list_mappings.fetch
+      tags: [Api20100401SipDomainMapping]
+      summary: Fetch a registration-auth CredentialList mapping on a SIP Domain
+      responses:
+        '200':
+          description: Registration-auth CredentialList mapping (mapped-list shape).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SipDomainMapping' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: sip_domain_auth_registrations_credential_list_mappings.delete
+      tags: [Api20100401SipDomainMapping]
+      summary: Unmap a registration-auth CredentialList from a SIP Domain
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
   /2010-04-01/Accounts/{AccountSid}/Messages.json:
     parameters:
       - $ref: '#/components/parameters/AccountSid'
@@ -1991,8 +3274,8 @@ paths:
       tags: [Api20100401Stream]
       summary: List active media streams for the call
       description: |
-        Returns 0 or 1 entries — mod_audio_fork supports a single
-        active fork per call uuid, matching the slot model on the
+        Returns 0 or 1 entries — the runtime supports a single
+        active media fork per call, matching the slot model on the
         VoiceML tracker. Pagination envelope is the Twilio-compatible
         shape so SDK auto-paginators round-trip cleanly.
       responses:
@@ -2019,9 +3302,9 @@ paths:
       tags: [Api20100401Stream]
       summary: Start a media stream on the call (REST equivalent of `<Connect><Stream>`/`<Start><Stream>`)
       description: |
-        Issues `uuid_audio_fork start` on the call leg via the same
-        executor primitive the TwiML verbs use. Returns the new Stream
-        resource with an MZ-prefixed sid.
+        Starts a media fork on the live call leg. Equivalent to
+        `<Connect><Stream>` / `<Start><Stream>` in TwiML. Returns
+        the new Stream resource with an MZ-prefixed sid.
       requestBody:
         required: true
         content:

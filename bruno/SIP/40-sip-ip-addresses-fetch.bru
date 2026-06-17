@@ -1,0 +1,25 @@
+meta {
+  name: SIP sip_ip_addresses.fetch
+  type: http
+  seq: 40
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/SIP/IpAccessControlLists/:IpAccessControlListSid/IpAddresses/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  IpAccessControlListSid: <IpAccessControlListSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a SIP IpAddress**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `sip_ip_addresses.fetch`
+}
