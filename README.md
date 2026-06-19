@@ -1,6 +1,6 @@
 # VoiceML API Collections
 
-Official **Postman** and **Bruno** collections for the [VoiceML REST API](https://voicetel.com/docs/api/v0.7/voiceml/) — Twilio-compatible voice, SMS, and AMD, every endpoint pre-wired with HTTP Basic Auth.
+Official **Postman** and **Bruno** collections for the [VoiceML REST API](https://voicetel.com/docs/api/v0.8/voiceml/) — Twilio-compatible voice, SMS, and AMD, every endpoint pre-wired with HTTP Basic Auth.
 
 ![Version](https://img.shields.io/badge/version-0.7.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -109,7 +109,7 @@ node scripts/build.mjs
 
 ## API Documentation
 
-- **Reference docs:** [voicetel.com/docs/api/v0.7/voiceml/](https://voicetel.com/docs/api/v0.7/voiceml/)
+- **Reference docs:** [voicetel.com/docs/api/v0.8/voiceml/](https://voicetel.com/docs/api/v0.8/voiceml/)
 - **TwiML validator:** [voicetel.com/voiceml/validator/](https://voicetel.com/voiceml/validator/)
 - **SDK catalogue:** [voicetel.com/docs/voiceml-sdks/](https://voicetel.com/docs/voiceml-sdks/)
 - **Source OpenAPI spec:** [`spec/callbroadcast.yml`](spec/callbroadcast.yml)
