@@ -1,0 +1,28 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.messages.list
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Messages
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Conversation Messages**
+Paginated list of the conversation's messages, ordered by index.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.messages.list`
+}

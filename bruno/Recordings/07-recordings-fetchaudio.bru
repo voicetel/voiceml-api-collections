@@ -1,0 +1,45 @@
+meta {
+  name: Recordings · Download WAV
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings/:Sid.wav
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Fetch recording audio (WAV)**
+Returns the captured audio as `audio/wav` with one of three
+delivery shapes:
+
+  * `200 OK` — local file present (typical for the first
+    `RECORDING_LOCAL_GRACE` window after the call ends).
+  * `302 Found` — local file cleaned up but archived to S3;
+    `Location` header points at a presigned URL with TTL
+    `RECORDING_PRESIGN_TTL`.
+  * `410 Gone` — local file gone AND no `s3_key` set
+    (typically: archival not configured + cleanup ran, or
+    archival failed and the WAV was lost).
+
+Tenant-scoped: a RecordingSid that belongs to a different
+account returns `404` with the same shape as a nonexistent
+sid — no enumeration leak.
+
+See [docs/aws-recordings.md](https://github.com/voicetel/callBroadcast/blob/main/docs/aws-recordings.md)
+for the archival pipeline.
+
+
+Returns `audio/wav` binary content, or **302** with a presigned S3 URL in `Location`.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `recordings.fetchAudio`
+}

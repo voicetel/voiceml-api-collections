@@ -1,0 +1,34 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.participants.create
+  type: http
+  seq: 23
+}
+
+post {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Participants
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create a Conversation Participant**
+Adds a participant to the conversation — a chat `Identity` or an SMS
+`MessagingBinding.Address`. `Attributes` defaults to `{}`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.participants.create`
+}

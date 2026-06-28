@@ -29,11 +29,14 @@ body:json {
 }
 
 docs {
-**Send an SMS**
-Sends `Body` to `To` via the configured SMS provider. When
-the provider is not configured the row is still persisted
-with status=failed and error_code=21609 so the integrator can
-introspect the rejection through GET /Messages/{Sid}.
+**Send an SMS or MMS**
+Sends `Body` to `To` via the configured SMS provider. When one
+or more `MediaUrl` values are supplied the message is an MMS,
+dispatched through the tenant's configured MMS provider (#473)
+and `Body` becomes optional. When the provider is not configured
+the row is still persisted with status=failed and
+error_code=21609 so the integrator can introspect the rejection
+through GET /Messages/{Sid}.
 
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.

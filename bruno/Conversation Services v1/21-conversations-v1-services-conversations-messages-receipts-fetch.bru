@@ -1,0 +1,26 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.conversations.messages.receipts.fetch
+  type: http
+  seq: 21
+}
+
+get {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Conversations/:ConversationSid/Messages/:MessageSid/Receipts/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  ConversationSid: <ConversationSid>
+  MessageSid: <MessageSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a service-scoped Message Receipt**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.conversations.messages.receipts.fetch`
+}

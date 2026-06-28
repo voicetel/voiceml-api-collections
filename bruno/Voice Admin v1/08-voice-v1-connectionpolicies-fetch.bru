@@ -1,0 +1,23 @@
+meta {
+  name: Voice Admin v1 voice.v1.connectionPolicies.fetch
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/v1/ConnectionPolicies/:ConnectionPolicySid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConnectionPolicySid: <ConnectionPolicySid>
+}
+
+docs {
+**Fetch a ConnectionPolicy**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.connectionPolicies.fetch`
+}

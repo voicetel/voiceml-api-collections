@@ -1,0 +1,27 @@
+meta {
+  name: Voice Admin v1 voice.v1.dialingPermissions.settings.update
+  type: http
+  seq: 22
+}
+
+post {
+  url: {{baseUrl}}/v1/Settings
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update DialingPermissions Settings**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.dialingPermissions.settings.update`
+}

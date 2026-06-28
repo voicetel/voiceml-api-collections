@@ -1,0 +1,28 @@
+meta {
+  name: Diagnostics exports.download
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Exports/:Date
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Date: <Date>
+}
+
+docs {
+**Download a daily event-log archive (VoiceML extension)**
+VoiceML extension (not a Twilio resource). Redirects (302) to a
+time-limited presigned URL for the account's archive on the given
+date.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `exports.download`
+}

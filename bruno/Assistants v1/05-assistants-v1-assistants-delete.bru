@@ -1,0 +1,25 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/v1/Assistants/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+docs {
+**Delete an Assistant**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.delete`
+}

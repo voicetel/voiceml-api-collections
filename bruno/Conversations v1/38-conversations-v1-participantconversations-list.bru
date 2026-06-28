@@ -1,0 +1,28 @@
+meta {
+  name: Conversations v1 conversations.v1.participantConversations.list
+  type: http
+  seq: 38
+}
+
+get {
+  url: {{baseUrl}}/v1/ParticipantConversations
+  body: none
+  auth: inherit
+}
+
+query {
+  ~Identity: 
+  ~Address: 
+  ~PageSize: 
+}
+
+docs {
+**List a participant's Conversations**
+Lists the conversations a participant belongs to, optionally filtered
+by `Identity` or messaging-binding `Address`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.participantConversations.list`
+}

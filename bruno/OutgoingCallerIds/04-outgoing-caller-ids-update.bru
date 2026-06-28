@@ -1,0 +1,32 @@
+meta {
+  name: OutgoingCallerIds outgoing_caller_ids.update
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/OutgoingCallerIds/:Sid.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update an OutgoingCallerId (partial — only FriendlyName is mutable)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `outgoing_caller_ids.update`
+}

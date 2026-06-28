@@ -1,0 +1,33 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.conversations.participants.update
+  type: http
+  seq: 25
+}
+
+post {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Conversations/:ConversationSid/Participants/:ParticipantSid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  ConversationSid: <ConversationSid>
+  ParticipantSid: <ParticipantSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a service-scoped Participant**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.conversations.participants.update`
+}

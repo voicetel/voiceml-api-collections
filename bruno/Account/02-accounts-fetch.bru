@@ -1,0 +1,32 @@
+meta {
+  name: Account accounts.fetch
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+docs {
+**Fetch the authenticated account**
+Returns the authenticated account in the Twilio Account shape
+(status/type/owner_account_sid/friendly_name/date_created/
+date_updated/uri/subresource_uris). The response ADDITIVELY embeds
+VoiceML extension keys (name, voice_url, tts_*, stt_*, aws_*,
+allow_cidr, created_at/updated_at). The account secret `auth_token`
+is never emitted on this surface; rotate it via
+`POST /Accounts/{Sid}/RotateKey`. Self-serve — an account may only
+read its own record.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `accounts.fetch`
+}

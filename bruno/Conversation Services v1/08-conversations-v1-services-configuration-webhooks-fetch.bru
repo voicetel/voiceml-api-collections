@@ -1,0 +1,23 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.configuration.webhooks.fetch
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Configuration/Webhooks
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+}
+
+docs {
+**Fetch the per-service Webhook configuration**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.configuration.webhooks.fetch`
+}

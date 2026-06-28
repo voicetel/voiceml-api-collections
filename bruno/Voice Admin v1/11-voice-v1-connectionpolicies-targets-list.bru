@@ -1,0 +1,27 @@
+meta {
+  name: Voice Admin v1 voice.v1.connectionPolicies.targets.list
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/v1/ConnectionPolicies/:ConnectionPolicySid/Targets
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConnectionPolicySid: <ConnectionPolicySid>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List ConnectionPolicy Targets**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.connectionPolicies.targets.list`
+}

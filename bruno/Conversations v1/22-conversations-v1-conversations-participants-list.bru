@@ -1,0 +1,27 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.participants.list
+  type: http
+  seq: 22
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Participants
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Conversation Participants**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.participants.list`
+}

@@ -1,0 +1,29 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.messages.receipts.list
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Messages/:MessageSid/Receipts
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  MessageSid: <MessageSid>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Message Receipts**
+Paginated list of the message's per-channel delivery receipts (read-only).
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.messages.receipts.list`
+}

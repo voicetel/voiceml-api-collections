@@ -1,0 +1,35 @@
+meta {
+  name: Conversations v1 conversations.v1.roles.update
+  type: http
+  seq: 42
+}
+
+post {
+  url: {{baseUrl}}/v1/Roles/:Sid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Permission": [
+    ""
+  ]
+}
+}
+
+docs {
+**Update a Role**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.roles.update`
+}

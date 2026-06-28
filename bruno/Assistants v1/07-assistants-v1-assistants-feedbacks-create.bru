@@ -1,0 +1,33 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.feedbacks.create
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/v1/Assistants/:id/Feedbacks
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "session_id": ""
+}
+}
+
+docs {
+**Create Feedback**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.feedbacks.create`
+}

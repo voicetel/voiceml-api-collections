@@ -1,0 +1,27 @@
+meta {
+  name: Conversations v1 conversations.v1.configuration.update
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/v1/Configuration
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update the account's Conversations Configuration**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.configuration.update`
+}

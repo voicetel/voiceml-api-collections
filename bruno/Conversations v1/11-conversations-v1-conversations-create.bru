@@ -1,0 +1,31 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.create
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/v1/Conversations
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create a Conversation**
+Creates a Conversation (a stateful messaging thread) for the
+authenticated account. All fields are optional; `State` defaults to
+`active` and `Attributes` to `{}`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.create`
+}

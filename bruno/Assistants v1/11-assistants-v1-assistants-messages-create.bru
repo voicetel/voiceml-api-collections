@@ -1,0 +1,34 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.messages.create
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/v1/Assistants/:id/Messages
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "identity": "",
+  "body": ""
+}
+}
+
+docs {
+**Send a message to an Assistant**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.messages.create`
+}

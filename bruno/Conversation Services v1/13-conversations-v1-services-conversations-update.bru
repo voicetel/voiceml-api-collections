@@ -1,0 +1,32 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.conversations.update
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Conversations/:ConversationSid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  ConversationSid: <ConversationSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a service-scoped Conversation**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.conversations.update`
+}

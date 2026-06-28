@@ -1,0 +1,23 @@
+meta {
+  name: Conversations v1 conversations.v1.configuration.addresses.fetch
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/v1/Configuration/Addresses/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a Configuration Address**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.configuration.addresses.fetch`
+}

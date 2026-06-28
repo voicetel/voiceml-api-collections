@@ -1,0 +1,28 @@
+meta {
+  name: Account balance.fetch
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Balance.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+docs {
+**Fetch the account balance**
+Returns the account's current balance. VoiceML is operator-billed —
+there is no per-tenant runtime balance ledger — so the balance is
+reported as a static zero in the account's currency. The response
+mirrors Twilio's Balance resource exactly.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `balance.fetch`
+}

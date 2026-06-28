@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "VoiceML API (v0.8.1)",
+  "name": "VoiceML API (v0.9.1)",
   "type": "collection",
   "ignore": [
     "node_modules",
@@ -19,6 +19,6 @@
       "email": "support@voicetel.com",
       "url": "https://voicetel.com"
     },
-    "apiVersion": "0.8.1"
+    "apiVersion": "0.9.1"
   }
 }

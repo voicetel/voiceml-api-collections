@@ -1,0 +1,24 @@
+meta {
+  name: OutgoingCallerIds outgoing_caller_ids.fetch
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/OutgoingCallerIds/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Fetch an OutgoingCallerId**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `outgoing_caller_ids.fetch`
+}

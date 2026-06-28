@@ -1,0 +1,32 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.participants.update
+  type: http
+  seq: 25
+}
+
+post {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Participants/:ParticipantSid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  ParticipantSid: <ParticipantSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a Conversation Participant**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.participants.update`
+}

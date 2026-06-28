@@ -1,0 +1,28 @@
+meta {
+  name: Routes V2 routes.v2.phoneNumbers.fetch
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v2/PhoneNumbers/:PhoneNumber
+  body: none
+  auth: inherit
+}
+
+params:path {
+  PhoneNumber: <PhoneNumber>
+}
+
+docs {
+**Fetch a phone number's Inbound Processing Region config**
+Twilio Inbound Processing Region API (routes/v2). Keyed by the
+phone number (E.164) or its PN sid; the account is resolved from
+HTTP Basic auth. 404 when the number is not claimed by the
+authenticated account.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `routes.v2.phoneNumbers.fetch`
+}

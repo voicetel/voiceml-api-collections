@@ -1,0 +1,39 @@
+meta {
+  name: Account accounts.update
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:Sid.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update the authenticated account**
+Updates the authenticated account. Accepts form-encoded or JSON
+bodies; only the fields present in the request are changed
+(only-set-fields-touched). `FriendlyName` maps to the Twilio
+`friendly_name`; the remaining fields configure VoiceML voice
+routing, BYO STT/TTS, AWS recording storage, and the IP allow-list.
+Returns the post-update Account resource in the same Twilio shape as
+the fetch. Self-serve — an account may only update its own record.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `accounts.update`
+}

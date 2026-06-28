@@ -1,0 +1,27 @@
+meta {
+  name: Messages media.delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:MessageSid/Media/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  MessageSid: <MessageSid>
+  Sid: <Sid>
+}
+
+docs {
+**Delete a Media item**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `media.delete`
+}

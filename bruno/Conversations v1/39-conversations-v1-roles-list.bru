@@ -1,0 +1,23 @@
+meta {
+  name: Conversations v1 conversations.v1.roles.list
+  type: http
+  seq: 39
+}
+
+get {
+  url: {{baseUrl}}/v1/Roles
+  body: none
+  auth: inherit
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Roles**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.roles.list`
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.tools.list
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{baseUrl}}/v1/Assistants/:id/Tools
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Tools attached to an Assistant**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.tools.list`
+}

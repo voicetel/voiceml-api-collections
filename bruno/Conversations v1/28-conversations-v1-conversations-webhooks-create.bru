@@ -1,0 +1,36 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.webhooks.create
+  type: http
+  seq: 28
+}
+
+post {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Webhooks
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Target": "webhook"
+}
+}
+
+docs {
+**Create a Conversation Scoped Webhook**
+Adds a conversation-scoped webhook. `Target` is required and must be
+one of `webhook`, `trigger`, or `studio`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.webhooks.create`
+}

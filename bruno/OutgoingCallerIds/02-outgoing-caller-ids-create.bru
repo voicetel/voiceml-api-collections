@@ -1,0 +1,37 @@
+meta {
+  name: OutgoingCallerIds outgoing_caller_ids.create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/OutgoingCallerIds.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "PhoneNumber": ""
+}
+}
+
+docs {
+**Create a ValidationRequest (start caller-ID verification)**
+Begins outbound caller-ID verification for `PhoneNumber`. Returns a
+`ValidationRequest` carrying the `validation_code` the caller must
+confirm. The verified number then appears as an OutgoingCallerId.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `outgoing_caller_ids.create`
+}

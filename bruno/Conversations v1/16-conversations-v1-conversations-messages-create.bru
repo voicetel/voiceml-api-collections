@@ -1,0 +1,35 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.messages.create
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Messages
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create a Conversation Message**
+Adds a message to the conversation. The server assigns the next
+monotonic `index`. All fields are optional; `Attributes` defaults
+to `{}`.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.messages.create`
+}

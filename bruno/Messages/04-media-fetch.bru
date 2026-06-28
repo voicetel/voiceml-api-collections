@@ -1,0 +1,31 @@
+meta {
+  name: Messages media.fetch
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:MessageSid/Media/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  MessageSid: <MessageSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a Media item**
+Returns the Media resource JSON by default. A request whose
+Accept header asks for the media bytes (e.g. `image/*`) receives
+a 302 redirect to a short-lived presigned URL for the stored
+bytes, or to the recorded external source URL when bytes are not
+stored locally (#473).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `media.fetch`
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Voice Admin v1 voice.v1.ipRecords.delete
+  type: http
+  seq: 20
+}
+
+delete {
+  url: {{baseUrl}}/v1/IpRecords/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+docs {
+**Delete an IpRecord**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.ipRecords.delete`
+}

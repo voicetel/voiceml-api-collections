@@ -1,0 +1,26 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.tools.detach
+  type: http
+  seq: 14
+}
+
+delete {
+  url: {{baseUrl}}/v1/Assistants/:id/Tools/:toolId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+  toolId: <toolId>
+}
+
+docs {
+**Detach a Tool from an Assistant**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.tools.detach`
+}

@@ -1,0 +1,39 @@
+meta {
+  name: Conferences conferenceRecordings.create
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Recordings.json
+  body: json
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  ConferenceSid: <ConferenceSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "RecordingStatusCallbackMethod": "POST"
+}
+}
+
+docs {
+**Start a recording on a live conference**
+Begins a recording on the named conference's mixed audio. The new
+Recording resource is returned with `source` =
+`StartConferenceRecordingAPI` and `status` = `in-progress`.
+Conference recordings are always mono (`channels` = 1).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conferenceRecordings.create`
+}

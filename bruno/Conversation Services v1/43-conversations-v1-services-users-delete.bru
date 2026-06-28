@@ -1,0 +1,26 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.users.delete
+  type: http
+  seq: 43
+}
+
+delete {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Users/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  Sid: <Sid>
+}
+
+docs {
+**Delete a service-scoped User**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.users.delete`
+}

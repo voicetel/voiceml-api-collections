@@ -1,0 +1,35 @@
+meta {
+  name: Routes V2 routes.v2.phoneNumbers.update
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/v2/PhoneNumbers/:PhoneNumber
+  body: json
+  auth: inherit
+}
+
+params:path {
+  PhoneNumber: <PhoneNumber>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Set a phone number's Inbound Processing Region**
+Updates the inbound processing region of a phone number already
+claimed by the authenticated account. Keyed by the phone number
+(E.164) or its PN sid; account resolved from HTTP Basic auth.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `routes.v2.phoneNumbers.update`
+}

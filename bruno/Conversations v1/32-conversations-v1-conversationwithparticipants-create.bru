@@ -1,0 +1,31 @@
+meta {
+  name: Conversations v1 conversations.v1.conversationWithParticipants.create
+  type: http
+  seq: 32
+}
+
+post {
+  url: {{baseUrl}}/v1/ConversationWithParticipants
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create a Conversation with initial Participants**
+Creates a conversation and its initial participants in one call. The
+`Participant` parameter is repeated; each value is a JSON object
+describing one participant (identity or messaging_binding).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversationWithParticipants.create`
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.configuration.notifications.update
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Configuration/Notifications
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update the per-service push Notification configuration**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.configuration.notifications.update`
+}

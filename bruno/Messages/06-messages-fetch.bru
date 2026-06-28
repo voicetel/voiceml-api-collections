@@ -1,0 +1,24 @@
+meta {
+  name: Messages · Fetch
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a Message**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `messages.fetch`
+}

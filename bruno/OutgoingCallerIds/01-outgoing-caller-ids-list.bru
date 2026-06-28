@@ -1,0 +1,31 @@
+meta {
+  name: OutgoingCallerIds outgoing_caller_ids.list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/OutgoingCallerIds.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~PhoneNumber: 
+  ~FriendlyName: 
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
+}
+
+docs {
+**List OutgoingCallerIds for the account (paged, FriendlyName ASC)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `outgoing_caller_ids.list`
+}

@@ -1,0 +1,32 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.conversations.messages.create
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Conversations/:ConversationSid/Messages
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  ConversationSid: <ConversationSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create a service-scoped Conversation Message**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.conversations.messages.create`
+}

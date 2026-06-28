@@ -1,0 +1,24 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.webhooks.fetch
+  type: http
+  seq: 29
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Webhooks/:WebhookSid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  WebhookSid: <WebhookSid>
+}
+
+docs {
+**Fetch a Conversation Scoped Webhook**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.webhooks.fetch`
+}

@@ -1,0 +1,26 @@
+meta {
+  name: Diagnostics · Health check
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/health
+  body: none
+  auth: none
+}
+
+docs {
+**Deep liveness probe**
+Composite probe with two-tier severity. Hard checks (storage,
+disk free space, voice stack processes + required modules +
+SIP profile state) flip the LB-facing `ok` boolean. Soft
+checks (host CPU loadavg, memory pressure, workload percents,
+cluster health) surface in `warnings` only — the LB stays in
+rotation. Result cached 5 s on full success.
+
+
+No authentication required.
+
+OperationId: `health.check`
+}

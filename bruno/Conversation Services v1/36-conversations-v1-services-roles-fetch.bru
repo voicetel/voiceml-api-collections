@@ -1,0 +1,24 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.roles.fetch
+  type: http
+  seq: 36
+}
+
+get {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Roles/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a service-scoped Role**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.roles.fetch`
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.participants.fetch
+  type: http
+  seq: 24
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Participants/:ParticipantSid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  ParticipantSid: <ParticipantSid>
+}
+
+docs {
+**Fetch a Conversation Participant**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.participants.fetch`
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.configuration.notifications.fetch
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Configuration/Notifications
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+}
+
+docs {
+**Fetch the per-service push Notification configuration**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.configuration.notifications.fetch`
+}

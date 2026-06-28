@@ -1,0 +1,33 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.messages.update
+  type: http
+  seq: 18
+}
+
+post {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Messages/:MessageSid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  MessageSid: <MessageSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a Conversation Message**
+Updates a Message's Author, Body, or Attributes.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.messages.update`
+}

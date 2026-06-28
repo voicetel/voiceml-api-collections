@@ -119,6 +119,8 @@ const FRIENDLY_NAMES = {
 
 // OpenAPI tag → display folder name.
 const TAG_TO_FOLDER = {
+  Api20100401Account: 'Account',
+  Api20100401Balance: 'Account',
   Api20100401Call: 'Calls',
   Api20100401CallRecording: 'Calls',
   Api20100401CallNotification: 'Calls',
@@ -130,22 +132,69 @@ const TAG_TO_FOLDER = {
   Api20100401ConferenceRecording: 'Conferences',
   Api20100401Participant: 'Conferences',
   Api20100401Message: 'Messages',
+  Api20100401Media: 'Messages',
   Api20100401Queue: 'Queues',
   Api20100401Member: 'Queues',
   Api20100401Application: 'Applications',
   Api20100401Recording: 'Recordings',
+  Api20100401Transcription: 'Recordings',
   Api20100401IncomingPhoneNumber: 'IncomingPhoneNumbers',
+  Api20100401OutgoingCallerId: 'OutgoingCallerIds',
+  Api20100401ValidationRequest: 'OutgoingCallerIds',
   Api20100401SipDomain: 'SIP',
   Api20100401SipDomainMapping: 'SIP',
   Api20100401SipCredentialList: 'SIP',
   Api20100401SipCredential: 'SIP',
   Api20100401SipIpAccessControlList: 'SIP',
   Api20100401SipIpAddress: 'SIP',
-  RoutesV2SipDomain: 'SIP',
+  RoutesV2SipDomain: 'Routes V2',
+  RoutesV2PhoneNumber: 'Routes V2',
+  VoiceV1ByocTrunk: 'Voice Admin v1',
+  VoiceV1ConnectionPolicy: 'Voice Admin v1',
+  VoiceV1ConnectionPolicyTarget: 'Voice Admin v1',
+  VoiceV1IpRecord: 'Voice Admin v1',
+  VoiceV1Settings: 'Voice Admin v1',
+  VoiceV1SourceIpMapping: 'Voice Admin v1',
+  ConversationsV1Conversation: 'Conversations v1',
+  ConversationsV1ConversationMessage: 'Conversations v1',
+  ConversationsV1ConversationMessageReceipt: 'Conversations v1',
+  ConversationsV1ConversationParticipant: 'Conversations v1',
+  ConversationsV1ConversationScopedWebhook: 'Conversations v1',
+  ConversationsV1ConversationWithParticipants: 'Conversations v1',
+  ConversationsV1ParticipantConversation: 'Conversations v1',
+  ConversationsV1UserConversation: 'Conversations v1',
+  ConversationsV1Role: 'Conversations v1',
+  ConversationsV1User: 'Conversations v1',
+  ConversationsV1Credential: 'Conversations v1',
+  ConversationsV1Configuration: 'Conversations v1',
+  ConversationsV1ConfigurationWebhook: 'Conversations v1',
+  ConversationsV1ConfigAddress: 'Conversations v1',
+  ConversationsV1Service: 'Conversations v1',
+  ConversationsV1ServiceConversation: 'Conversation Services v1',
+  ConversationsV1ServiceConversationMessage: 'Conversation Services v1',
+  ConversationsV1ServiceConversationMessageReceipt: 'Conversation Services v1',
+  ConversationsV1ServiceConversationParticipant: 'Conversation Services v1',
+  ConversationsV1ServiceConversationScopedWebhook: 'Conversation Services v1',
+  ConversationsV1ServiceConversationWithParticipants: 'Conversation Services v1',
+  ConversationsV1ServiceParticipantConversation: 'Conversation Services v1',
+  ConversationsV1ServiceUserConversation: 'Conversation Services v1',
+  ConversationsV1ServiceRole: 'Conversation Services v1',
+  ConversationsV1ServiceUser: 'Conversation Services v1',
+  ConversationsV1ServiceBinding: 'Conversation Services v1',
+  ConversationsV1ServiceConfiguration: 'Conversation Services v1',
+  ConversationsV1ServiceNotification: 'Conversation Services v1',
+  ConversationsV1ServiceWebhookConfiguration: 'Conversation Services v1',
+  AssistantsV1Assistant: 'Assistants v1',
+  AssistantsV1Tool: 'Assistants v1',
+  AssistantsV1Knowledge: 'Assistants v1',
+  AssistantsV1Session: 'Assistants v1',
+  AssistantsV1Feedback: 'Assistants v1',
+  AssistantsV1Policy: 'Assistants v1',
   Diagnostic: 'Diagnostics',
 };
 
 const FOLDER_ORDER = [
+  'Account',
   'Calls',
   'Conferences',
   'Messages',
@@ -153,25 +202,47 @@ const FOLDER_ORDER = [
   'Applications',
   'Recordings',
   'IncomingPhoneNumbers',
+  'OutgoingCallerIds',
   'SIP',
+  'Routes V2',
+  'Voice Admin v1',
+  'Conversations v1',
+  'Conversation Services v1',
+  'Assistants v1',
   'Diagnostics',
 ];
 
 const FOLDER_DESCRIPTIONS = {
+  Account:
+    'Account-level metadata — fetch / update Account and fetch Balance. Twilio-compatible.',
   Calls:
     'Call resources and subresources — originate, update, terminate, recordings, streams, SIPREC, transcriptions, events, notifications, and <Pay> sessions.',
   Conferences:
     'Conference resources — list, fetch, update, manage participants, and list conference-scoped recordings.',
   Messages:
-    'SMS Messages — send, list, fetch, redact / cancel, and delete. Twilio-compatible /Messages REST surface.',
+    'SMS Messages — send, list, fetch, redact / cancel, delete. Message Media — fetch / list / delete the per-message media inventory. Twilio-compatible /Messages REST surface.',
   Queues:
     'Queue resources and members — create, list, fetch, update, delete queues; peek, fetch, and dequeue members.',
   Applications:
     'TwiML Application resources — create, list, fetch, update, and delete voice applications.',
   Recordings:
-    'Account-scoped recording catalog — list, fetch, delete recordings and download WAV audio.',
+    'Account-scoped recording catalog — list, fetch, delete recordings, download WAV audio, and fetch / list recording-derived Transcriptions.',
   IncomingPhoneNumbers:
     'Tenant self-serve phone numbers — list, create, fetch, update, and delete DIDs assigned to the account.',
+  OutgoingCallerIds:
+    'Verified caller IDs — list, fetch, update, delete verified caller IDs; create a ValidationRequest to start the phone-verify flow.',
+  SIP:
+    'SIP Trunking surface — Domains, CredentialLists + Credentials, IpAccessControlLists + IpAddresses, and Domain-to-CredentialList / IpAccessControlList mappings under historical, Auth/Calls, and Auth/Registrations namespaces.',
+  'Routes V2':
+    'routes/v2 Inbound Processing Region — fetch / update voice region binding for SIP Domains and Phone Numbers (account resolved from HTTP Basic auth).',
+  'Voice Admin v1':
+    'voice/v1 administrative surface — BYOC Trunks, ConnectionPolicies (+ Targets), DialingPermissions Settings, SourceIpMappings, IpRecords.',
+  'Conversations v1':
+    'conversations/v1 account-level surface — Conversations + Messages / Receipts / Participants / Scoped Webhooks; Roles, Users + UserConversations, Credentials, Configuration (+ Webhook / Address); ParticipantConversations, ConversationWithParticipants; Services (the Service container).',
+  'Conversation Services v1':
+    'conversations/v1 service-scoped mirror — every Conversations v1 resource under /v1/Services/{ChatServiceSid}/* with per-service Configuration / Notifications / Webhooks singletons and the service Binding inventory.',
+  'Assistants v1':
+    'AI Assistants v1 — Assistants, Tools, Knowledge (+ Status / Chunks), Sessions, Messages (send), Feedback, Policies. JSON request bodies; PUT for updates.',
   Diagnostics:
     'VoiceML extension endpoints — health probe and OpenAPI self-publish (no authentication required).',
 };

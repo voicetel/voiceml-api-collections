@@ -1,0 +1,30 @@
+meta {
+  name: Conversations v1 conversations.v1.configuration.addresses.create
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/v1/Configuration/Addresses
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Type": "sms",
+  "Address": ""
+}
+}
+
+docs {
+**Create a Configuration Address**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.configuration.addresses.create`
+}

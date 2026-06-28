@@ -1,0 +1,24 @@
+meta {
+  name: Voice Admin v1 voice.v1.sourceIpMappings.list
+  type: http
+  seq: 23
+}
+
+get {
+  url: {{baseUrl}}/v1/SourceIpMappings
+  body: none
+  auth: inherit
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List SourceIpMappings**
+Paginated list of the authenticated account's SourceIpMappings.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.sourceIpMappings.list`
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Conversations v1 conversations.v1.configuration.fetch
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v1/Configuration
+  body: none
+  auth: inherit
+}
+
+docs {
+**Fetch the account's Conversations Configuration**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.configuration.fetch`
+}

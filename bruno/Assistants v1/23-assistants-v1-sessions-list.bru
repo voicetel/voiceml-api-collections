@@ -1,0 +1,23 @@
+meta {
+  name: Assistants v1 assistants.v1.sessions.list
+  type: http
+  seq: 23
+}
+
+get {
+  url: {{baseUrl}}/v1/Sessions
+  body: none
+  auth: inherit
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Sessions**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.sessions.list`
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Voice Admin v1 voice.v1.byocTrunks.list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v1/ByocTrunks
+  body: none
+  auth: inherit
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List ByocTrunks**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.byocTrunks.list`
+}

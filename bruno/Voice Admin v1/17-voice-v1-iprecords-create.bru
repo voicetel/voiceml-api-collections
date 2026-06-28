@@ -1,0 +1,33 @@
+meta {
+  name: Voice Admin v1 voice.v1.ipRecords.create
+  type: http
+  seq: 17
+}
+
+post {
+  url: {{baseUrl}}/v1/IpRecords
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "IpAddress": ""
+}
+}
+
+docs {
+**Create an IpRecord**
+Creates a Voice v1 IpRecord (a standalone allowed source IP) for
+the authenticated account. `IpAddress` is required;
+`CidrPrefixLength` defaults to 32 (a single host).
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.ipRecords.create`
+}

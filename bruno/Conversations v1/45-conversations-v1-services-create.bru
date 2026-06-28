@@ -1,0 +1,29 @@
+meta {
+  name: Conversations v1 conversations.v1.services.create
+  type: http
+  seq: 45
+}
+
+post {
+  url: {{baseUrl}}/v1/Services
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "FriendlyName": ""
+}
+}
+
+docs {
+**Create a Conversation Service**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.create`
+}

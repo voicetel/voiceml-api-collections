@@ -1,0 +1,34 @@
+meta {
+  name: Voice Admin v1 voice.v1.sourceIpMappings.create
+  type: http
+  seq: 24
+}
+
+post {
+  url: {{baseUrl}}/v1/SourceIpMappings
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "IpRecordSid": "",
+  "SipDomainSid": ""
+}
+}
+
+docs {
+**Create a SourceIpMapping**
+Maps an IpRecord to a SIP Domain so inbound calls from that source
+IP route to the domain. Both `IpRecordSid` and `SipDomainSid` are
+required.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.sourceIpMappings.create`
+}

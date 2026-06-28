@@ -1,0 +1,31 @@
+meta {
+  name: Assistants v1 assistants.v1.tools.create
+  type: http
+  seq: 27
+}
+
+post {
+  url: {{baseUrl}}/v1/Tools
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "name": "",
+  "type": "",
+  "enabled": false
+}
+}
+
+docs {
+**Create a Tool**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.tools.create`
+}

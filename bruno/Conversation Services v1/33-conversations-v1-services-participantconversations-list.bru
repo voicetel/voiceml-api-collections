@@ -1,0 +1,29 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.participantConversations.list
+  type: http
+  seq: 33
+}
+
+get {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/ParticipantConversations
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+}
+
+query {
+  ~Identity: 
+  ~Address: 
+  ~PageSize: 
+}
+
+docs {
+**List service-scoped Participant Conversations**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.participantConversations.list`
+}

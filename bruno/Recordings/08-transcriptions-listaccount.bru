@@ -1,0 +1,32 @@
+meta {
+  name: Recordings transcriptions.listAccount
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Transcriptions.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+query {
+  ~DateCreated: 
+  ~DateCreated<: 
+  ~DateCreated>: 
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
+}
+
+docs {
+**List the account's transcriptions**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `transcriptions.listAccount`
+}

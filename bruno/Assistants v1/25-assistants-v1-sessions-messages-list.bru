@@ -1,0 +1,27 @@
+meta {
+  name: Assistants v1 assistants.v1.sessions.messages.list
+  type: http
+  seq: 25
+}
+
+get {
+  url: {{baseUrl}}/v1/Sessions/:id/Messages
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List a Session's Messages**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.sessions.messages.list`
+}

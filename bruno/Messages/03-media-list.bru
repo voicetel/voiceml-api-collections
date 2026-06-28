@@ -1,0 +1,33 @@
+meta {
+  name: Messages media.list
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:MessageSid/Media.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  MessageSid: <MessageSid>
+}
+
+query {
+  ~DateCreated: 
+  ~DateCreated<: 
+  ~DateCreated>: 
+  ~Page: 
+  ~PageSize: 
+  ~PageToken: 
+}
+
+docs {
+**List the Media items attached to a Message (paged)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `media.list`
+}

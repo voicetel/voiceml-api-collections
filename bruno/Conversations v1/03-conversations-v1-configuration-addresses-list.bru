@@ -1,0 +1,23 @@
+meta {
+  name: Conversations v1 conversations.v1.configuration.addresses.list
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/v1/Configuration/Addresses
+  body: none
+  auth: inherit
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Configuration Addresses**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.configuration.addresses.list`
+}

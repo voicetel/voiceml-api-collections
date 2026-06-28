@@ -1,0 +1,27 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.webhooks.list
+  type: http
+  seq: 27
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Webhooks
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Conversation Scoped Webhooks**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.webhooks.list`
+}

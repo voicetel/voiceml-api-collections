@@ -1,0 +1,25 @@
+meta {
+  name: Conversations v1 conversations.v1.configuration.addresses.delete
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/v1/Configuration/Addresses/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+docs {
+**Delete a Configuration Address**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.configuration.addresses.delete`
+}

@@ -1,0 +1,29 @@
+meta {
+  name: Diagnostics exports.list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Exports.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+}
+
+docs {
+**List available daily event-log archives (VoiceML extension)**
+VoiceML extension (not a Twilio resource). Lists the authenticated
+account's nightly event-log archives — calls, messages, recordings
+metadata, and payments — available for self-service download.
+Archives are produced once per day and retained for one year, after
+which an S3 lifecycle rule deletes them.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `exports.list`
+}

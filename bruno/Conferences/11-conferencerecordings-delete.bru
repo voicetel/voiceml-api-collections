@@ -1,0 +1,30 @@
+meta {
+  name: Conferences conferenceRecordings.delete
+  type: http
+  seq: 11
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Conferences/:ConferenceSid/Recordings/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  ConferenceSid: <ConferenceSid>
+  Sid: <Sid>
+}
+
+docs {
+**Delete a conference-scoped recording**
+Same semantics as `/Recordings/{Sid}` but enforces conference
+scope from the URL path.
+
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conferenceRecordings.delete`
+}

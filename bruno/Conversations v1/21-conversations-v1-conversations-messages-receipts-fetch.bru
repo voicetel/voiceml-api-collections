@@ -1,0 +1,25 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.messages.receipts.fetch
+  type: http
+  seq: 21
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Messages/:MessageSid/Receipts/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  MessageSid: <MessageSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a Message Receipt**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.messages.receipts.fetch`
+}

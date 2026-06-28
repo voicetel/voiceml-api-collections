@@ -1,0 +1,25 @@
+meta {
+  name: Voice Admin v1 voice.v1.connectionPolicies.delete
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{baseUrl}}/v1/ConnectionPolicies/:ConnectionPolicySid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConnectionPolicySid: <ConnectionPolicySid>
+}
+
+docs {
+**Delete a ConnectionPolicy**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.connectionPolicies.delete`
+}

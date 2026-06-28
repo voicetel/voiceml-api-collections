@@ -1,0 +1,27 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.feedbacks.list
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/v1/Assistants/:id/Feedbacks
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List an Assistant's Feedback**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.feedbacks.list`
+}

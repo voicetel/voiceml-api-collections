@@ -1,0 +1,22 @@
+meta {
+  name: Voice Admin v1 voice.v1.dialingPermissions.settings.fetch
+  type: http
+  seq: 21
+}
+
+get {
+  url: {{baseUrl}}/v1/Settings
+  body: none
+  auth: inherit
+}
+
+docs {
+**Fetch DialingPermissions Settings**
+Returns the authenticated account's dialing-permissions inheritance
+setting. Defaults to `false` when never set.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.dialingPermissions.settings.fetch`
+}

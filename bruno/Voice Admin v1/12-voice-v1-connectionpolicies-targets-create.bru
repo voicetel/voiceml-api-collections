@@ -1,0 +1,33 @@
+meta {
+  name: Voice Admin v1 voice.v1.connectionPolicies.targets.create
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/v1/ConnectionPolicies/:ConnectionPolicySid/Targets
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ConnectionPolicySid: <ConnectionPolicySid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "Target": ""
+}
+}
+
+docs {
+**Create a ConnectionPolicy Target**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.connectionPolicies.targets.create`
+}

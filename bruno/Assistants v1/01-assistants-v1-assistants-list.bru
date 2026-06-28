@@ -1,0 +1,25 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v1/Assistants
+  body: none
+  auth: inherit
+}
+
+query {
+  ~PageSize: 
+  ~Page: 
+  ~PageToken: 
+}
+
+docs {
+**List Assistants**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.list`
+}

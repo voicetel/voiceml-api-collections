@@ -1,0 +1,27 @@
+meta {
+  name: Assistants v1 assistants.v1.knowledge.chunks.list
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{baseUrl}}/v1/Knowledge/:id/Chunks
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Knowledge chunks**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.knowledge.chunks.list`
+}

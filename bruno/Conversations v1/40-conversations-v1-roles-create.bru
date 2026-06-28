@@ -1,0 +1,33 @@
+meta {
+  name: Conversations v1 conversations.v1.roles.create
+  type: http
+  seq: 40
+}
+
+post {
+  url: {{baseUrl}}/v1/Roles
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "FriendlyName": "",
+  "Type": "conversation",
+  "Permission": [
+    ""
+  ]
+}
+}
+
+docs {
+**Create a Role**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.roles.create`
+}

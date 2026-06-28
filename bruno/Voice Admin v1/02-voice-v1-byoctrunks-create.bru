@@ -1,0 +1,28 @@
+meta {
+  name: Voice Admin v1 voice.v1.byocTrunks.create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/v1/ByocTrunks
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Create a ByocTrunk**
+Creates a bring-your-own-carrier trunk for the authenticated account. All fields optional.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.byocTrunks.create`
+}

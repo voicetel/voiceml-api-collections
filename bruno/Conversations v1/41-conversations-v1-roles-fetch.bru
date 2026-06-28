@@ -1,0 +1,23 @@
+meta {
+  name: Conversations v1 conversations.v1.roles.fetch
+  type: http
+  seq: 41
+}
+
+get {
+  url: {{baseUrl}}/v1/Roles/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a Role**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.roles.fetch`
+}

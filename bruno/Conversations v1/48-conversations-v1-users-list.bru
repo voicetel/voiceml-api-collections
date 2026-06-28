@@ -1,0 +1,23 @@
+meta {
+  name: Conversations v1 conversations.v1.users.list
+  type: http
+  seq: 48
+}
+
+get {
+  url: {{baseUrl}}/v1/Users
+  body: none
+  auth: inherit
+}
+
+query {
+  ~PageSize: 
+}
+
+docs {
+**List Users**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.users.list`
+}

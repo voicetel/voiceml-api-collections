@@ -1,0 +1,32 @@
+meta {
+  name: Voice Admin v1 voice.v1.ipRecords.update
+  type: http
+  seq: 19
+}
+
+post {
+  url: {{baseUrl}}/v1/IpRecords/:Sid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update an IpRecord**
+Updates an IpRecord's FriendlyName. Only FriendlyName is mutable.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.ipRecords.update`
+}

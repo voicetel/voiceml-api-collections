@@ -1,0 +1,23 @@
+meta {
+  name: Voice Admin v1 voice.v1.sourceIpMappings.fetch
+  type: http
+  seq: 25
+}
+
+get {
+  url: {{baseUrl}}/v1/SourceIpMappings/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a SourceIpMapping**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.sourceIpMappings.fetch`
+}

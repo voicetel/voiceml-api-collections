@@ -1,0 +1,26 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.participants.delete
+  type: http
+  seq: 26
+}
+
+delete {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Participants/:ParticipantSid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  ParticipantSid: <ParticipantSid>
+}
+
+docs {
+**Delete a Conversation Participant**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.participants.delete`
+}

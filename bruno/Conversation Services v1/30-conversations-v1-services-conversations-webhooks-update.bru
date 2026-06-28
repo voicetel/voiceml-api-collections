@@ -1,0 +1,33 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.conversations.webhooks.update
+  type: http
+  seq: 30
+}
+
+post {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Conversations/:ConversationSid/Webhooks/:WebhookSid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  ConversationSid: <ConversationSid>
+  WebhookSid: <WebhookSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a service-scoped Scoped Webhook**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.conversations.webhooks.update`
+}

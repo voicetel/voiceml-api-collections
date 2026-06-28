@@ -27,10 +27,12 @@ body:json {
 }
 
 docs {
-**Update a SIPREC session — clears tracking only**
-The SIPREC integration doesn't expose a stop verb; the SRS
-recording session continues until the call hangs up. This
-endpoint clears VoiceML's session-tracking entry only.
+**Stop a SIPREC session**
+Status=stopped hard-stops the recording: VoiceML detaches the
+media fork (RTP stops leaving the media server immediately) and
+BYEs the SRS leg, then clears its session-tracking entry. Every
+recording on the call leg is stopped. The stop is not resumable —
+start a new SIPREC session to record again.
 
 
 HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.

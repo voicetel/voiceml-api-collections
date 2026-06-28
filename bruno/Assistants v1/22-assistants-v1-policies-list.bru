@@ -1,0 +1,25 @@
+meta {
+  name: Assistants v1 assistants.v1.policies.list
+  type: http
+  seq: 22
+}
+
+get {
+  url: {{baseUrl}}/v1/Policies
+  body: none
+  auth: inherit
+}
+
+query {
+  ~ToolId: 
+  ~KnowledgeId: 
+  ~PageSize: 
+}
+
+docs {
+**List Policies**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.policies.list`
+}

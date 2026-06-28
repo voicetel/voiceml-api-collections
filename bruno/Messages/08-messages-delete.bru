@@ -1,0 +1,26 @@
+meta {
+  name: Messages · Delete
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Messages/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  Sid: <Sid>
+}
+
+docs {
+**Delete a Message**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `messages.delete`
+}

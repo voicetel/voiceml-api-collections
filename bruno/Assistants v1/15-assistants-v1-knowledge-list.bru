@@ -1,0 +1,24 @@
+meta {
+  name: Assistants v1 assistants.v1.knowledge.list
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{baseUrl}}/v1/Knowledge
+  body: none
+  auth: inherit
+}
+
+query {
+  ~AssistantId: 
+  ~PageSize: 
+}
+
+docs {
+**List Knowledge**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.knowledge.list`
+}

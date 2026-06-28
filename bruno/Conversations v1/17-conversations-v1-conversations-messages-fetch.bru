@@ -1,0 +1,24 @@
+meta {
+  name: Conversations v1 conversations.v1.conversations.messages.fetch
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{baseUrl}}/v1/Conversations/:ConversationSid/Messages/:MessageSid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ConversationSid: <ConversationSid>
+  MessageSid: <MessageSid>
+}
+
+docs {
+**Fetch a Conversation Message**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.conversations.messages.fetch`
+}

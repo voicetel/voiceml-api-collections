@@ -1,0 +1,31 @@
+meta {
+  name: Voice Admin v1 voice.v1.connectionPolicies.update
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/v1/ConnectionPolicies/:ConnectionPolicySid
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ConnectionPolicySid: <ConnectionPolicySid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update a ConnectionPolicy**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.connectionPolicies.update`
+}

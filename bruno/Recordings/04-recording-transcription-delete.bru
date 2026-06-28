@@ -1,0 +1,27 @@
+meta {
+  name: Recordings recording.transcription.delete
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/2010-04-01/Accounts/:AccountSid/Recordings/:RecordingSid/Transcriptions/:Sid.json
+  body: none
+  auth: inherit
+}
+
+params:path {
+  AccountSid: {{accountSid}}
+  RecordingSid: <RecordingSid>
+  Sid: <Sid>
+}
+
+docs {
+**Delete a recording's transcription**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `recording.transcription.delete`
+}

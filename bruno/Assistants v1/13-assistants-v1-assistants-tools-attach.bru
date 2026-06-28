@@ -1,0 +1,24 @@
+meta {
+  name: Assistants v1 assistants.v1.assistants.tools.attach
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/v1/Assistants/:id/Tools/:toolId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+  toolId: <toolId>
+}
+
+docs {
+**Attach a Tool to an Assistant**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.assistants.tools.attach`
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Assistants v1 assistants.v1.sessions.fetch
+  type: http
+  seq: 24
+}
+
+get {
+  url: {{baseUrl}}/v1/Sessions/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+docs {
+**Fetch a Session**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.sessions.fetch`
+}

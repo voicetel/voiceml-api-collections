@@ -1,0 +1,23 @@
+meta {
+  name: Assistants v1 assistants.v1.tools.fetch
+  type: http
+  seq: 28
+}
+
+get {
+  url: {{baseUrl}}/v1/Tools/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+docs {
+**Fetch a Tool (with policies)**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.tools.fetch`
+}

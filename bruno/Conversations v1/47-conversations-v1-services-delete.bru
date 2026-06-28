@@ -1,0 +1,25 @@
+meta {
+  name: Conversations v1 conversations.v1.services.delete
+  type: http
+  seq: 47
+}
+
+delete {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+}
+
+docs {
+**Delete a Conversation Service**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.delete`
+}

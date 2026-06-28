@@ -1,0 +1,27 @@
+meta {
+  name: Conversations v1 conversations.v1.configuration.webhooks.update
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/v1/Configuration/Webhooks
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update the account-global Conversation webhook config**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.configuration.webhooks.update`
+}

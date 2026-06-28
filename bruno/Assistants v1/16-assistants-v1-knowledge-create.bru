@@ -1,0 +1,30 @@
+meta {
+  name: Assistants v1 assistants.v1.knowledge.create
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/v1/Knowledge
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "name": "",
+  "type": ""
+}
+}
+
+docs {
+**Create Knowledge**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.knowledge.create`
+}

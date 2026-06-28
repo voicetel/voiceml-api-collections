@@ -1,0 +1,24 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.users.fetch
+  type: http
+  seq: 41
+}
+
+get {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Users/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+  Sid: <Sid>
+}
+
+docs {
+**Fetch a service-scoped User**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.users.fetch`
+}

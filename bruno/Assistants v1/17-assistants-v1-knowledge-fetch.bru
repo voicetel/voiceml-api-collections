@@ -1,0 +1,23 @@
+meta {
+  name: Assistants v1 assistants.v1.knowledge.fetch
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{baseUrl}}/v1/Knowledge/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: <id>
+}
+
+docs {
+**Fetch Knowledge**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `assistants.v1.knowledge.fetch`
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Voice Admin v1 voice.v1.byocTrunks.delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/v1/ByocTrunks/:Sid
+  body: none
+  auth: inherit
+}
+
+params:path {
+  Sid: <Sid>
+}
+
+docs {
+**Delete a ByocTrunk**
+
+Returns **204 No Content** on success — no response body.
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `voice.v1.byocTrunks.delete`
+}

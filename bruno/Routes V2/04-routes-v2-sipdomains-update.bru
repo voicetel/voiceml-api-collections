@@ -1,0 +1,36 @@
+meta {
+  name: Routes V2 routes.v2.sipDomains.update
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/v2/SipDomains/:SipDomain
+  body: json
+  auth: inherit
+}
+
+params:path {
+  SipDomain: <SipDomain>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Set a SIP domain's Inbound Processing Region**
+Updates the inbound processing region and/or friendly name of an
+existing SIP domain (create the domain first via the 2010-04-01
+SIP Domains API). Keyed by domain name; account resolved from
+HTTP Basic auth.
+
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `routes.v2.sipDomains.update`
+}

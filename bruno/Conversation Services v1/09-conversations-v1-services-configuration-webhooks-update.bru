@@ -1,0 +1,31 @@
+meta {
+  name: Conversation Services v1 conversations.v1.services.configuration.webhooks.update
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/v1/Services/:ChatServiceSid/Configuration/Webhooks
+  body: json
+  auth: inherit
+}
+
+params:path {
+  ChatServiceSid: <ChatServiceSid>
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{}
+}
+
+docs {
+**Update the per-service Webhook configuration**
+
+HTTP Basic Auth: username = `{{accountSid}}`, password = `{{apiKey}}`.
+
+OperationId: `conversations.v1.services.configuration.webhooks.update`
+}
